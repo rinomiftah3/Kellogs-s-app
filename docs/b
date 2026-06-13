@@ -1,0 +1,103 @@
+========================================
+GROUP 1 — FOUNDATION
+========================================
+
+01. User
+02. Category
+
+========================================
+GROUP 2 — PRODUCT CATALOG SYSTEM
+========================================
+
+03. Product
+04. ProductImage
+05. ProductOption
+06. ProductOptionValue
+07. ProductSku
+08. ProductSkuValue
+09. ProductReview
+10. ProductReviewImage
+
+
+========================================
+GROUP 3 — CUSTOMER SYSTEM
+========================================
+
+11. CustomerProfile
+12. CustomerAddress
+13. CustomerDevice
+14. CustomerNotification
+15. Wishlist
+
+========================================
+GROUP 4 — INVENTORY SYSTEM
+========================================
+
+16. Inventory
+17. StockMovement
+18. StockAdjustment
+19. StockOpname
+
+========================================
+GROUP 5 — CART SYSTEM
+========================================
+
+20. Cart
+21. CartItem
+
+========================================
+GROUP 6 — CHECKOUT SYSTEM
+========================================
+
+22. CheckoutSession
+23. CheckoutItem
+
+========================================
+GROUP 7 — PROMOTION SYSTEM
+========================================
+
+24. Voucher
+25. Promotion
+26. PromoProduct
+27. PromoCategory
+28. PromoSku
+29. VoucherUsage
+
+========================================
+GROUP 8 — ORDER SYSTEM
+========================================
+
+30. Order
+31. OrderItem
+32. OrderHistory
+33. OrderStatusLog
+
+========================================
+GROUP 9 — PAYMENT SYSTEM
+========================================
+
+34. Payment
+35. PaymentTransaction
+36. PaymentCallback
+
+========================================
+GROUP 10 — SHIPPING SYSTEM
+========================================
+
+37. Courier
+38. ShippingMethod
+39. Shipment
+40. ShipmentTracking
+
+========================================
+GROUP 11 — LOYALTY SYSTEM
+========================================
+
+41. LoyaltyPoint
+42. PointTransaction
+
+========================================
+GROUP 12 — ACTIVITY SYSTEM
+========================================
+
+43. Activity

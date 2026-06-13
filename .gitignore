@@ -1,0 +1,33 @@
+# Laravel
+backend/vendor/
+backend/node_modules/
+backend/.env
+backend/.phpunit.result.cache
+backend/public/build/
+backend/public/hot/
+backend/storage/*.key
+backend/bootstrap/cache/*.php
+
+# Flutter
+mobile/.dart_tool/
+mobile/build/
+mobile/.packages
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.pub-cache/
+
+# React
+admin/node_modules/
+admin/dist/
+admin/build/
+admin/.env
+
+# VSCode
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
