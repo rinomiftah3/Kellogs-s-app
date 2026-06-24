@@ -18,13 +18,8 @@ class ProductPolicy
     ): bool|null {
 
         if (
-            method_exists(
-                $user,
-                'hasRole'
-            )
-            &&
             $user->hasRole(
-                'Super Admin'
+                User::ROLE_SUPER_ADMIN
             )
         ) {
 
@@ -80,7 +75,7 @@ class ProductPolicy
     ): Response {
 
         if (
-            !$user->can(
+            ! $user->can(
                 'products.update'
             )
         ) {
@@ -102,7 +97,7 @@ class ProductPolicy
     ): Response {
 
         if (
-            !$user->can(
+            ! $user->can(
                 'products.delete'
             )
         ) {
@@ -112,132 +107,36 @@ class ProductPolicy
             );
         }
 
-        return Response::allow();
-    }
-
-    /**
-     * Restore product.
-     */
-    public function restore(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.restore'
-        );
-    }
-
-    /**
-     * Force delete product.
-     */
-    public function forceDelete(
-        User $user,
-        Product $product
-    ): Response {
+        /*
+        |--------------------------------------------------------------------------
+        | SKU Protection
+        |--------------------------------------------------------------------------
+        */
 
         if (
-            !$user->can(
-                'products.force-delete'
-            )
+            $product->hasSku()
         ) {
 
             return Response::deny(
-                'Anda tidak memiliki izin menghapus permanen produk.'
+                'Produk tidak dapat dihapus karena masih memiliki SKU.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Review Protection
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $product->hasReviews()
+        ) {
+
+            return Response::deny(
+                'Produk tidak dapat dihapus karena masih memiliki review.'
             );
         }
 
         return Response::allow();
-    }
-
-    /**
-     * Activate product.
-     */
-    public function activate(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.update'
-        );
-    }
-
-    /**
-     * Deactivate product.
-     */
-    public function deactivate(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.update'
-        );
-    }
-
-    /**
-     * Upload product image.
-     */
-    public function uploadImage(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.update'
-        );
-    }
-
-    /**
-     * Delete product image.
-     */
-    public function deleteImage(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.update'
-        );
-    }
-
-    /**
-     * Increase stock.
-     */
-    public function increaseStock(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.update'
-        );
-    }
-
-    /**
-     * Decrease stock.
-     */
-    public function decreaseStock(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.update'
-        );
-    }
-
-    /**
-     * Manage inventory.
-     */
-    public function manageInventory(
-        User $user,
-        Product $product
-    ): bool {
-
-        return $user->can(
-            'products.update'
-        );
     }
 }

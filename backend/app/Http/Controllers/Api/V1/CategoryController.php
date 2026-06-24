@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Requests\FilterCategoryRequest;
 
 use App\Http\Resources\V1\CategoryResource;
 
@@ -29,31 +30,17 @@ class CategoryController extends Controller
      * Display listing.
      */
     public function index(
-        Request $request
+        FilterCategoryRequest  $request
     ) {
 
         $categories =
             $this->categoryService
                 ->paginate(
-                    filters: [
-
-                        'search' =>
-                            $request->get(
-                                'search'
-                            ),
-
-                    ],
-
-                    perPage: min(
-                        (int) $request->get(
-                            'per_page',
-                            15
-                        ),
-                        100
-                    )
+                    filters: $request->filters(),
+                    perPage: $request->perPage(),
                 );
 
-        return $this->successResponse(
+            return $this->successResponse(
             CategoryResource::collection(
                 $categories
             ),

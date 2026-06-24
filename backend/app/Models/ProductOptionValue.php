@@ -12,6 +12,40 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $product_option_id
+ * @property string $value
+ * @property string|null $code
+ * @property int $sort_order
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\ProductOption $option
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductSkuValue> $skuValues
+ * @property-read int|null $sku_values_count
+ * @method static Builder<static>|ProductOptionValue active()
+ * @method static Builder<static>|ProductOptionValue byOption(?int $optionId)
+ * @method static Builder<static>|ProductOptionValue inactive()
+ * @method static Builder<static>|ProductOptionValue newModelQuery()
+ * @method static Builder<static>|ProductOptionValue newQuery()
+ * @method static Builder<static>|ProductOptionValue ordered()
+ * @method static Builder<static>|ProductOptionValue query()
+ * @method static Builder<static>|ProductOptionValue search(?string $keyword)
+ * @method static Builder<static>|ProductOptionValue unused()
+ * @method static Builder<static>|ProductOptionValue used()
+ * @method static Builder<static>|ProductOptionValue whereCode($value)
+ * @method static Builder<static>|ProductOptionValue whereCreatedAt($value)
+ * @method static Builder<static>|ProductOptionValue whereId($value)
+ * @method static Builder<static>|ProductOptionValue whereIsActive($value)
+ * @method static Builder<static>|ProductOptionValue whereProductOptionId($value)
+ * @method static Builder<static>|ProductOptionValue whereSortOrder($value)
+ * @method static Builder<static>|ProductOptionValue whereUpdatedAt($value)
+ * @method static Builder<static>|ProductOptionValue whereValue($value)
+ * @mixin \Eloquent
+ */
 class ProductOptionValue extends Model
 {
     use HasFactory;

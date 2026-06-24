@@ -2,16 +2,26 @@
 
 namespace App\Services;
 
+use App\Models\Activity;
+
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Support\Facades\Cache;
-
-use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogService
 {
     /**
-     * Paginated activity logs.
+     * Default relationships.
+     */
+    protected array $relations = [
+        'causer',
+        'subject',
+    ];
+
+    /**
+     * Get paginated activity logs.
      */
     public function paginate(
         array $filters = [],
@@ -25,17 +35,15 @@ class ActivityLogService
 
         return Activity::query()
 
-            ->with([
-                'causer',
-                'subject',
-            ])
+            ->with($this->relations)
 
             ->when(
                 filled($filters['search'] ?? null),
                 function ($query) use ($filters) {
 
-                    $search =
-                        $filters['search'];
+                    $search = trim(
+                        $filters['search']
+                    );
 
                     $query->where(
                         function ($q) use ($search) {
@@ -64,35 +72,32 @@ class ActivityLogService
 
             ->when(
                 filled($filters['event'] ?? null),
-                fn ($query) =>
-                    $query->where(
-                        'event',
+                fn ($query)
+                    => $query->event(
                         $filters['event']
                     )
             )
 
             ->when(
                 filled($filters['log_name'] ?? null),
-                fn ($query) =>
-                    $query->where(
-                        'log_name',
+                fn ($query)
+                    => $query->logName(
                         $filters['log_name']
                     )
             )
 
             ->when(
                 filled($filters['causer_id'] ?? null),
-                fn ($query) =>
-                    $query->where(
-                        'causer_id',
+                fn ($query)
+                    => $query->causer(
                         $filters['causer_id']
                     )
             )
 
             ->when(
                 filled($filters['subject_id'] ?? null),
-                fn ($query) =>
-                    $query->where(
+                fn ($query)
+                    => $query->where(
                         'subject_id',
                         $filters['subject_id']
                     )
@@ -100,8 +105,8 @@ class ActivityLogService
 
             ->when(
                 filled($filters['subject_type'] ?? null),
-                fn ($query) =>
-                    $query->where(
+                fn ($query)
+                    => $query->where(
                         'subject_type',
                         $filters['subject_type']
                     )
@@ -109,8 +114,8 @@ class ActivityLogService
 
             ->when(
                 filled($filters['date_from'] ?? null),
-                fn ($query) =>
-                    $query->whereDate(
+                fn ($query)
+                    => $query->whereDate(
                         'created_at',
                         '>=',
                         $filters['date_from']
@@ -119,8 +124,8 @@ class ActivityLogService
 
             ->when(
                 filled($filters['date_to'] ?? null),
-                fn ($query) =>
-                    $query->whereDate(
+                fn ($query)
+                    => $query->whereDate(
                         'created_at',
                         '<=',
                         $filters['date_to']
@@ -138,35 +143,80 @@ class ActivityLogService
     }
 
     /**
-     * Find activity log.
+     * Get all activity logs.
+     */
+    public function all(
+        array $filters = []
+    ): Collection {
+
+        return Activity::query()
+
+            ->with($this->relations)
+
+            ->when(
+                filled($filters['event'] ?? null),
+                fn ($query)
+                    => $query->event(
+                        $filters['event']
+                    )
+            )
+
+            ->when(
+                filled($filters['log_name'] ?? null),
+                fn ($query)
+                    => $query->logName(
+                        $filters['log_name']
+                    )
+            )
+
+            ->latest()
+
+            ->get();
+    }
+    /**
+     * Find activity by ID.
      */
     public function find(
-        Activity $activity
-    ): Activity {
+        int $id
+    ): ?Activity {
 
-        return $activity->load([
-            'causer',
-            'subject',
-        ]);
+        return Activity::query()
+
+            ->with($this->relations)
+
+            ->find($id);
     }
 
     /**
-     * Latest activities.
+     * Find activity or fail.
+     */
+    public function findOrFail(
+        int $id
+    ): Activity {
+
+        return Activity::query()
+
+            ->with($this->relations)
+
+            ->findOrFail($id);
+    }
+
+    /**
+     * Get latest activities.
      */
     public function latest(
         int $limit = 10
-    ) {
+    ): Collection {
 
         return Cache::remember(
+
             "activity.latest.{$limit}",
+
             now()->addMinutes(5),
 
             fn () => Activity::query()
 
-                ->with([
-                    'causer',
-                    'subject',
-                ])
+                ->with($this->relations)
 
                 ->latest()
 
@@ -177,73 +227,214 @@ class ActivityLogService
     }
 
     /**
+     * Create activity log.
+     */
+    public function log(
+        string $description,
+        ?string $event = null,
+        ?string $logName = null,
+        ?Model $subject = null,
+        ?Model $causer = null,
+        ?array $attributeChanges = null,
+        ?array $properties = null,
+        ?string $batchUuid = null
+    ): Activity {
+
+        $activity = Activity::create([
+
+            /*
+            |--------------------------------------------------------------------------
+            | Activity Information
+            |--------------------------------------------------------------------------
+            */
+
+            'log_name'
+                => $logName,
+
+            'description'
+                => trim($description),
+
+            'event'
+                => $event,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Subject
+            |--------------------------------------------------------------------------
+            */
+
+            'subject_type'
+                => $subject?->getMorphClass(),
+
+            'subject_id'
+                => $subject?->getKey(),
+
+            /*
+            |--------------------------------------------------------------------------
+            | Causer
+            |--------------------------------------------------------------------------
+            */
+
+            'causer_type'
+                => $causer?->getMorphClass(),
+
+            'causer_id'
+                => $causer?->getKey(),
+
+            /*
+            |--------------------------------------------------------------------------
+            | Activity Data
+            |--------------------------------------------------------------------------
+            */
+
+            'attribute_changes'
+                => $attributeChanges,
+
+            'properties'
+                => $properties,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Batch
+            |--------------------------------------------------------------------------
+            */
+
+            'batch_uuid'
+                => $batchUuid,
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Clear Activity Cache
+        |--------------------------------------------------------------------------
+        */
+
+        $this->clearCaches();
+
+        Cache::forget(
+            'activity.latest.10'
+        );
+
+        return $activity
+
+            ->fresh()
+
+            ->load($this->relations);
+    }
+    /**
      * Activity statistics.
      */
     public function statistics(): array
     {
         return Cache::remember(
+
             'activity.statistics',
+
             now()->addMinutes(10),
 
             function () {
 
                 return [
 
-                    'total_logs' =>
-                        Activity::count(),
+                    'total_logs'
+                        => Activity::query()
+                            ->count(),
 
-                    'today_logs' =>
-                        Activity::whereDate(
-                            'created_at',
-                            today()
-                        )->count(),
+                    'today_logs'
+                        => Activity::query()
+                            ->today()
+                            ->count(),
 
-                    'this_week_logs' =>
-                        Activity::where(
-                            'created_at',
-                            '>=',
-                            now()->startOfWeek()
-                        )->count(),
+                    'this_week_logs'
+                        => Activity::query()
+                            ->thisWeek()
+                            ->count(),
 
-                    'this_month_logs' =>
-                        Activity::where(
-                            'created_at',
-                            '>=',
-                            now()->startOfMonth()
-                        )->count(),
+                    'this_month_logs'
+                        => Activity::query()
+                            ->thisMonth()
+                            ->count(),
 
-                    'login_logs' =>
-                        Activity::where(
-                            'event',
-                            'login'
-                        )->count(),
+                    'login_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_LOGIN
+                            )
+                            ->count(),
 
-                    'logout_logs' =>
-                        Activity::where(
-                            'event',
-                            'logout'
-                        )->count(),
+                    'logout_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_LOGOUT
+                            )
+                            ->count(),
 
-                    'created_logs' =>
-                        Activity::where(
-                            'event',
-                            'like',
-                            '%created%'
-                        )->count(),
+                    'created_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_CREATED
+                            )
+                            ->count(),
 
-                    'updated_logs' =>
-                        Activity::where(
-                            'event',
-                            'like',
-                            '%updated%'
-                        )->count(),
+                    'updated_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_UPDATED
+                            )
+                            ->count(),
 
-                    'deleted_logs' =>
-                        Activity::where(
-                            'event',
-                            'like',
-                            '%deleted%'
-                        )->count(),
+                    'deleted_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_DELETED
+                            )
+                            ->count(),
+
+                    'approved_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_APPROVED
+                            )
+                            ->count(),
+
+                    'rejected_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_REJECTED
+                            )
+                            ->count(),
+
+                    'published_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_PUBLISHED
+                            )
+                            ->count(),
+
+                    'cancelled_logs'
+                        => Activity::query()
+                            ->event(
+                                Activity::EVENT_CANCELLED
+                            )
+                            ->count(),
+
+                    'system_logs'
+                        => Activity::query()
+
+                            ->whereNull(
+                                'causer_id'
+                            )
+
+                            ->count(),
+
+                    'user_logs'
+                        => Activity::query()
+
+                            ->whereNotNull(
+                                'causer_id'
+                            )
+
+                            ->count(),
                 ];
             }
         );
@@ -254,19 +445,32 @@ class ActivityLogService
      */
     public function availableEvents(): array
     {
-        return Activity::query()
+        return Cache::remember(
 
-            ->whereNotNull('event')
+            'activity.available_events',
 
-            ->distinct()
+            now()->addMinutes(30),
 
-            ->orderBy('event')
+            fn () => Activity::query()
 
-            ->pluck('event')
+                ->whereNotNull(
+                    'event'
+                )
 
-            ->values()
+                ->distinct()
 
-            ->toArray();
+                ->orderBy(
+                    'event'
+                )
+
+                ->pluck(
+                    'event'
+                )
+
+                ->values()
+
+                ->toArray()
+        );
     }
 
     /**
@@ -274,40 +478,49 @@ class ActivityLogService
      */
     public function availableLogNames(): array
     {
-        return Activity::query()
+        return Cache::remember(
 
-            ->whereNotNull('log_name')
+            'activity.available_log_names',
 
-            ->distinct()
+            now()->addMinutes(30),
 
-            ->orderBy('log_name')
+            fn () => Activity::query()
 
-            ->pluck('log_name')
+                ->whereNotNull(
+                    'log_name'
+                )
 
-            ->values()
+                ->distinct()
 
-            ->toArray();
+                ->orderBy(
+                    'log_name'
+                )
+
+                ->pluck(
+                    'log_name'
+                )
+
+                ->values()
+
+                ->toArray()
+        );
     }
-
     /**
-     * Clean old logs.
+     * Clean old activity logs.
      */
     public function clean(
         int $days = 365
     ): int {
 
-        $deleted =
-            Activity::query()
+        $deleted = Activity::query()
 
-                ->where(
-                    'created_at',
-                    '<',
-                    now()->subDays(
-                        $days
-                    )
-                )
+            ->where(
+                'created_at',
+                '<',
+                now()->subDays($days)
+            )
 
-                ->delete();
+            ->delete();
 
         $this->clearCaches();
 
@@ -315,7 +528,7 @@ class ActivityLogService
     }
 
     /**
-     * Truncate all logs.
+     * Truncate all activity logs.
      */
     public function truncate(): void
     {
@@ -330,36 +543,36 @@ class ActivityLogService
     public function dashboardSummary(): array
     {
         return Cache::remember(
+
             'activity.dashboard',
+
             now()->addMinutes(5),
 
             fn () => [
 
-                'today' =>
-                    Activity::whereDate(
-                        'created_at',
-                        today()
-                    )->count(),
+                'today'
+                    => Activity::query()
+                        ->today()
+                        ->count(),
 
-                'this_week' =>
-                    Activity::where(
-                        'created_at',
-                        '>=',
-                        now()->startOfWeek()
-                    )->count(),
+                'this_week'
+                    => Activity::query()
+                        ->thisWeek()
+                        ->count(),
 
-                'this_month' =>
-                    Activity::where(
-                        'created_at',
-                        '>=',
-                        now()->startOfMonth()
-                    )->count(),
+                'this_month'
+                    => Activity::query()
+                        ->thisMonth()
+                        ->count(),
+
+                'latest'
+                    => $this->latest(5),
             ]
         );
     }
 
     /**
-     * Clear caches.
+     * Clear activity caches.
      */
     private function clearCaches(): void
     {
@@ -372,7 +585,35 @@ class ActivityLogService
         );
 
         Cache::forget(
+            'activity.available_events'
+        );
+
+        Cache::forget(
+            'activity.available_log_names'
+        );
+
+        Cache::forget(
             'dashboard.overview'
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Clear latest caches
+        |--------------------------------------------------------------------------
+        |
+        | latest() menggunakan key dinamis:
+        | activity.latest.{limit}
+        |
+        | Yang umum dipakai kita bersihkan
+        | untuk menghindari data stale.
+        |
+        */
+
+        foreach ([5, 10, 15, 20, 50] as $limit) {
+
+            Cache::forget(
+                "activity.latest.{$limit}"
+            );
+        }
     }
 }

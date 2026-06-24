@@ -17,12 +17,8 @@ class UserPolicy
     ): bool|null {
 
         if (
-            method_exists(
-                $user,
-                'hasRole'
-            ) &&
             $user->hasRole(
-                'Super Admin'
+                User::ROLE_SUPER_ADMIN
             )
         ) {
 
@@ -33,7 +29,7 @@ class UserPolicy
     }
 
     /**
-     * View user list.
+     * Determine whether the user can view any users.
      */
     public function viewAny(
         User $user
@@ -45,21 +41,20 @@ class UserPolicy
     }
 
     /**
-     * View user detail.
+     * Determine whether the user can view the user.
      */
     public function view(
         User $user,
         User $model
     ): bool {
 
-        return
-            $user->can(
-                'users.view'
-            );
+        return $user->can(
+            'users.view'
+        );
     }
 
     /**
-     * Create user.
+     * Determine whether the user can create users.
      */
     public function create(
         User $user
@@ -71,7 +66,7 @@ class UserPolicy
     }
 
     /**
-     * Update user.
+     * Determine whether the user can update the user.
      */
     public function update(
         User $user,
@@ -84,15 +79,21 @@ class UserPolicy
     }
 
     /**
-     * Delete user.
+     * Determine whether the user can delete the user.
      */
     public function delete(
         User $user,
         User $model
     ): Response {
 
+        /*
+        |--------------------------------------------------------------------------
+        | Permission Check
+        |--------------------------------------------------------------------------
+        */
+
         if (
-            !$user->can(
+            ! $user->can(
                 'users.delete'
             )
         ) {
@@ -126,13 +127,13 @@ class UserPolicy
 
         if (
             $model->hasRole(
-                'Super Admin'
+                User::ROLE_SUPER_ADMIN
             )
         ) {
 
             $superAdminCount =
                 User::role(
-                    'Super Admin'
+                    User::ROLE_SUPER_ADMIN
                 )->count();
 
             if (
@@ -146,76 +147,5 @@ class UserPolicy
         }
 
         return Response::allow();
-    }
-
-    /**
-     * Restore user.
-     */
-    public function restore(
-        User $user,
-        User $model
-    ): bool {
-
-        return $user->can(
-            'users.restore'
-        );
-    }
-
-    /**
-     * Force delete user.
-     */
-    public function forceDelete(
-        User $user,
-        User $model
-    ): Response {
-
-        if (
-            !$user->can(
-                'users.force-delete'
-            )
-        ) {
-
-            return Response::deny(
-                'Anda tidak memiliki izin menghapus permanen user.'
-            );
-        }
-
-        if (
-            $user->id ===
-            $model->id
-        ) {
-
-            return Response::deny(
-                'Anda tidak dapat menghapus akun sendiri.'
-            );
-        }
-
-        return Response::allow();
-    }
-
-    /**
-     * Change user role.
-     */
-    public function changeRole(
-        User $user,
-        User $model
-    ): bool {
-
-        return $user->can(
-            'users.update'
-        );
-    }
-
-    /**
-     * Change user status.
-     */
-    public function changeStatus(
-        User $user,
-        User $model
-    ): bool {
-
-        return $user->can(
-            'users.update'
-        );
     }
 }

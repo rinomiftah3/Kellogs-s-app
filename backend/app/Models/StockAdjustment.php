@@ -20,6 +20,62 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $product_sku_id
+ * @property string $adjustment_number
+ * @property string $type
+ * @property int $old_stock
+ * @property int $new_stock
+ * @property int $difference
+ * @property string $reason
+ * @property string|null $notes
+ * @property string $status
+ * @property int|null $requested_by
+ * @property int|null $approved_by
+ * @property \Illuminate\Support\Carbon|null $approved_at
+ * @property \Illuminate\Support\Carbon $adjustment_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\User|null $approver
+ * @property-read \App\Models\User|null $requester
+ * @property-read \App\Models\ProductSku|null $sku
+ * @method static Builder<static>|StockAdjustment approved()
+ * @method static Builder<static>|StockAdjustment bySku(?int $skuId)
+ * @method static Builder<static>|StockAdjustment byStatus(?string $status)
+ * @method static Builder<static>|StockAdjustment byType(?string $type)
+ * @method static Builder<static>|StockAdjustment dateRange($startDate, $endDate)
+ * @method static Builder<static>|StockAdjustment latestFirst()
+ * @method static Builder<static>|StockAdjustment newModelQuery()
+ * @method static Builder<static>|StockAdjustment newQuery()
+ * @method static Builder<static>|StockAdjustment onlyTrashed()
+ * @method static Builder<static>|StockAdjustment pending()
+ * @method static Builder<static>|StockAdjustment query()
+ * @method static Builder<static>|StockAdjustment rejected()
+ * @method static Builder<static>|StockAdjustment today()
+ * @method static Builder<static>|StockAdjustment whereAdjustmentDate($value)
+ * @method static Builder<static>|StockAdjustment whereAdjustmentNumber($value)
+ * @method static Builder<static>|StockAdjustment whereApprovedAt($value)
+ * @method static Builder<static>|StockAdjustment whereApprovedBy($value)
+ * @method static Builder<static>|StockAdjustment whereCreatedAt($value)
+ * @method static Builder<static>|StockAdjustment whereDeletedAt($value)
+ * @method static Builder<static>|StockAdjustment whereDifference($value)
+ * @method static Builder<static>|StockAdjustment whereId($value)
+ * @method static Builder<static>|StockAdjustment whereNewStock($value)
+ * @method static Builder<static>|StockAdjustment whereNotes($value)
+ * @method static Builder<static>|StockAdjustment whereOldStock($value)
+ * @method static Builder<static>|StockAdjustment whereProductSkuId($value)
+ * @method static Builder<static>|StockAdjustment whereReason($value)
+ * @method static Builder<static>|StockAdjustment whereRequestedBy($value)
+ * @method static Builder<static>|StockAdjustment whereStatus($value)
+ * @method static Builder<static>|StockAdjustment whereType($value)
+ * @method static Builder<static>|StockAdjustment whereUpdatedAt($value)
+ * @method static Builder<static>|StockAdjustment withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|StockAdjustment withoutTrashed()
+ * @mixin \Eloquent
  */
 class StockAdjustment extends Model
 {

@@ -13,6 +13,72 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string|null $provider
+ * @property string|null $description
+ * @property string|null $logo
+ * @property string|null $website
+ * @property string|null $contact_email
+ * @property string|null $contact_phone
+ * @property string|null $tracking_url_template
+ * @property bool $supports_tracking
+ * @property bool $supports_cod
+ * @property bool $supports_insurance
+ * @property int $sort_order
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read string $display_name
+ * @property-read string|null $logo_url
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Shipment> $shipments
+ * @property-read int|null $shipments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ShippingMethod> $shippingMethods
+ * @property-read int|null $shipping_methods_count
+ * @method static Builder<static>|Courier active()
+ * @method static \Database\Factories\CourierFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Courier inactive()
+ * @method static Builder<static>|Courier newModelQuery()
+ * @method static Builder<static>|Courier newQuery()
+ * @method static Builder<static>|Courier onlyTrashed()
+ * @method static Builder<static>|Courier ordered()
+ * @method static Builder<static>|Courier published()
+ * @method static Builder<static>|Courier query()
+ * @method static Builder<static>|Courier search(?string $keyword)
+ * @method static Builder<static>|Courier supportsCod()
+ * @method static Builder<static>|Courier supportsInsurance()
+ * @method static Builder<static>|Courier supportsTracking()
+ * @method static Builder<static>|Courier whereCode($value)
+ * @method static Builder<static>|Courier whereContactEmail($value)
+ * @method static Builder<static>|Courier whereContactPhone($value)
+ * @method static Builder<static>|Courier whereCreatedAt($value)
+ * @method static Builder<static>|Courier whereDeletedAt($value)
+ * @method static Builder<static>|Courier whereDescription($value)
+ * @method static Builder<static>|Courier whereId($value)
+ * @method static Builder<static>|Courier whereIsActive($value)
+ * @method static Builder<static>|Courier whereLogo($value)
+ * @method static Builder<static>|Courier whereMetadata($value)
+ * @method static Builder<static>|Courier whereName($value)
+ * @method static Builder<static>|Courier whereProvider($value)
+ * @method static Builder<static>|Courier wherePublishedAt($value)
+ * @method static Builder<static>|Courier whereSortOrder($value)
+ * @method static Builder<static>|Courier whereSupportsCod($value)
+ * @method static Builder<static>|Courier whereSupportsInsurance($value)
+ * @method static Builder<static>|Courier whereSupportsTracking($value)
+ * @method static Builder<static>|Courier whereTrackingUrlTemplate($value)
+ * @method static Builder<static>|Courier whereUpdatedAt($value)
+ * @method static Builder<static>|Courier whereWebsite($value)
+ * @method static Builder<static>|Courier withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Courier withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Courier extends Model
 {
     use HasFactory;

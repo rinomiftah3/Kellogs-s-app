@@ -21,6 +21,62 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * Push Notification
  *
  * Enterprise Ready
+ *
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property string $device_id
+ * @property string|null $device_name
+ * @property string $device_type
+ * @property string|null $platform
+ * @property string|null $platform_version
+ * @property string|null $app_version
+ * @property string|null $fcm_token
+ * @property string|null $ip_address
+ * @property string|null $user_agent
+ * @property bool $is_active
+ * @property bool $is_trusted
+ * @property \Illuminate\Support\Carbon|null $last_login_at
+ * @property \Illuminate\Support\Carbon|null $last_active_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customer
+ * @method static Builder<static>|CustomerDevice active()
+ * @method static Builder<static>|CustomerDevice byCustomer(?int $customerId)
+ * @method static Builder<static>|CustomerDevice byType(?string $type)
+ * @method static Builder<static>|CustomerDevice inactive()
+ * @method static Builder<static>|CustomerDevice latestActive()
+ * @method static Builder<static>|CustomerDevice latestLogin()
+ * @method static Builder<static>|CustomerDevice newModelQuery()
+ * @method static Builder<static>|CustomerDevice newQuery()
+ * @method static Builder<static>|CustomerDevice online()
+ * @method static Builder<static>|CustomerDevice onlyTrashed()
+ * @method static Builder<static>|CustomerDevice query()
+ * @method static Builder<static>|CustomerDevice trusted()
+ * @method static Builder<static>|CustomerDevice untrusted()
+ * @method static Builder<static>|CustomerDevice whereAppVersion($value)
+ * @method static Builder<static>|CustomerDevice whereCreatedAt($value)
+ * @method static Builder<static>|CustomerDevice whereCustomerProfileId($value)
+ * @method static Builder<static>|CustomerDevice whereDeletedAt($value)
+ * @method static Builder<static>|CustomerDevice whereDeviceId($value)
+ * @method static Builder<static>|CustomerDevice whereDeviceName($value)
+ * @method static Builder<static>|CustomerDevice whereDeviceType($value)
+ * @method static Builder<static>|CustomerDevice whereFcmToken($value)
+ * @method static Builder<static>|CustomerDevice whereId($value)
+ * @method static Builder<static>|CustomerDevice whereIpAddress($value)
+ * @method static Builder<static>|CustomerDevice whereIsActive($value)
+ * @method static Builder<static>|CustomerDevice whereIsTrusted($value)
+ * @method static Builder<static>|CustomerDevice whereLastActiveAt($value)
+ * @method static Builder<static>|CustomerDevice whereLastLoginAt($value)
+ * @method static Builder<static>|CustomerDevice wherePlatform($value)
+ * @method static Builder<static>|CustomerDevice wherePlatformVersion($value)
+ * @method static Builder<static>|CustomerDevice whereUpdatedAt($value)
+ * @method static Builder<static>|CustomerDevice whereUserAgent($value)
+ * @method static Builder<static>|CustomerDevice withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|CustomerDevice withoutTrashed()
+ * @mixin \Eloquent
  */
 class CustomerDevice extends Model
 {

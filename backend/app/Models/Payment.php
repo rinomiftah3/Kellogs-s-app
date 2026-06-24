@@ -14,6 +14,73 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property string $payment_number
+ * @property string $gateway
+ * @property string $method
+ * @property numeric $amount
+ * @property numeric $paid_amount
+ * @property numeric $fee_amount
+ * @property numeric $refund_amount
+ * @property string $status
+ * @property string|null $gateway_transaction_id
+ * @property string|null $gateway_order_id
+ * @property string|null $payment_url
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property \Illuminate\Support\Carbon|null $expired_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PaymentCallback> $callbacks
+ * @property-read int|null $callbacks_count
+ * @property-read bool $is_successful
+ * @property-read float $net_amount
+ * @property-read float $remaining_amount
+ * @property-read \App\Models\Order|null $order
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PaymentTransaction> $transactions
+ * @property-read int|null $transactions_count
+ * @method static \Database\Factories\PaymentFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Payment failed()
+ * @method static Builder<static>|Payment gateway(?string $gateway)
+ * @method static Builder<static>|Payment newModelQuery()
+ * @method static Builder<static>|Payment newQuery()
+ * @method static Builder<static>|Payment onlyTrashed()
+ * @method static Builder<static>|Payment paid()
+ * @method static Builder<static>|Payment pending()
+ * @method static Builder<static>|Payment query()
+ * @method static Builder<static>|Payment refunded()
+ * @method static Builder<static>|Payment search(?string $keyword)
+ * @method static Builder<static>|Payment status(?string $status)
+ * @method static Builder<static>|Payment whereAmount($value)
+ * @method static Builder<static>|Payment whereCreatedAt($value)
+ * @method static Builder<static>|Payment whereDeletedAt($value)
+ * @method static Builder<static>|Payment whereExpiredAt($value)
+ * @method static Builder<static>|Payment whereFeeAmount($value)
+ * @method static Builder<static>|Payment whereGateway($value)
+ * @method static Builder<static>|Payment whereGatewayOrderId($value)
+ * @method static Builder<static>|Payment whereGatewayTransactionId($value)
+ * @method static Builder<static>|Payment whereId($value)
+ * @method static Builder<static>|Payment whereMetadata($value)
+ * @method static Builder<static>|Payment whereMethod($value)
+ * @method static Builder<static>|Payment whereNotes($value)
+ * @method static Builder<static>|Payment whereOrderId($value)
+ * @method static Builder<static>|Payment wherePaidAmount($value)
+ * @method static Builder<static>|Payment wherePaidAt($value)
+ * @method static Builder<static>|Payment wherePaymentNumber($value)
+ * @method static Builder<static>|Payment wherePaymentUrl($value)
+ * @method static Builder<static>|Payment whereRefundAmount($value)
+ * @method static Builder<static>|Payment whereStatus($value)
+ * @method static Builder<static>|Payment whereUpdatedAt($value)
+ * @method static Builder<static>|Payment withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Payment withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Payment extends Model
 {
     use HasFactory;

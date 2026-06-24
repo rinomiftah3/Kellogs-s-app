@@ -27,7 +27,7 @@ class UserObserver
 
         UserCreated::dispatch(
             $user
-        )->afterCommit();
+        );
     }
 
     /**
@@ -53,7 +53,7 @@ class UserObserver
 
             UserUpdated::dispatch(
                 $user
-            )->afterCommit();
+            );
         }
 
         $this->clearCaches();

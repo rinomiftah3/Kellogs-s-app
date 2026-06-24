@@ -13,6 +13,109 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int $shipping_method_id
+ * @property string $shipment_number
+ * @property string|null $tracking_number
+ * @property string $courier_name
+ * @property string $courier_code
+ * @property string $service_name
+ * @property string $service_code
+ * @property string|null $tracking_url
+ * @property numeric $shipping_cost
+ * @property numeric $insurance_cost
+ * @property bool $is_insured
+ * @property numeric $weight
+ * @property int $item_count
+ * @property string $status
+ * @property string $recipient_name
+ * @property string $recipient_phone
+ * @property string $recipient_address
+ * @property string $recipient_city
+ * @property string $recipient_province
+ * @property string $recipient_postal_code
+ * @property \Illuminate\Support\Carbon|null $pickup_at
+ * @property \Illuminate\Support\Carbon|null $shipped_at
+ * @property \Illuminate\Support\Carbon|null $estimated_delivery_at
+ * @property \Illuminate\Support\Carbon|null $delivered_at
+ * @property int $delivery_attempts
+ * @property int|null $delivery_duration_hours
+ * @property \Illuminate\Support\Carbon|null $last_tracking_sync_at
+ * @property string|null $received_by
+ * @property string|null $signed_proof
+ * @property string|null $failed_reason
+ * @property string|null $return_reason
+ * @property string|null $notes
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read bool $is_cancelled
+ * @property-read bool $is_delivered
+ * @property-read bool $is_in_transit
+ * @property-read string|null $tracking_link
+ * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\ShippingMethod|null $shippingMethod
+ * @method static Builder<static>|Shipment byTrackingNumber(?string $trackingNumber)
+ * @method static Builder<static>|Shipment cancelled()
+ * @method static Builder<static>|Shipment delivered()
+ * @method static \Database\Factories\ShipmentFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Shipment inTransit()
+ * @method static Builder<static>|Shipment latest()
+ * @method static Builder<static>|Shipment newModelQuery()
+ * @method static Builder<static>|Shipment newQuery()
+ * @method static Builder<static>|Shipment onlyTrashed()
+ * @method static Builder<static>|Shipment pending()
+ * @method static Builder<static>|Shipment query()
+ * @method static Builder<static>|Shipment readyToShip()
+ * @method static Builder<static>|Shipment returned()
+ * @method static Builder<static>|Shipment search(?string $keyword)
+ * @method static Builder<static>|Shipment whereCourierCode($value)
+ * @method static Builder<static>|Shipment whereCourierName($value)
+ * @method static Builder<static>|Shipment whereCreatedAt($value)
+ * @method static Builder<static>|Shipment whereDeletedAt($value)
+ * @method static Builder<static>|Shipment whereDeliveredAt($value)
+ * @method static Builder<static>|Shipment whereDeliveryAttempts($value)
+ * @method static Builder<static>|Shipment whereDeliveryDurationHours($value)
+ * @method static Builder<static>|Shipment whereEstimatedDeliveryAt($value)
+ * @method static Builder<static>|Shipment whereFailedReason($value)
+ * @method static Builder<static>|Shipment whereId($value)
+ * @method static Builder<static>|Shipment whereInsuranceCost($value)
+ * @method static Builder<static>|Shipment whereIsInsured($value)
+ * @method static Builder<static>|Shipment whereItemCount($value)
+ * @method static Builder<static>|Shipment whereLastTrackingSyncAt($value)
+ * @method static Builder<static>|Shipment whereMetadata($value)
+ * @method static Builder<static>|Shipment whereNotes($value)
+ * @method static Builder<static>|Shipment whereOrderId($value)
+ * @method static Builder<static>|Shipment wherePickupAt($value)
+ * @method static Builder<static>|Shipment whereReceivedBy($value)
+ * @method static Builder<static>|Shipment whereRecipientAddress($value)
+ * @method static Builder<static>|Shipment whereRecipientCity($value)
+ * @method static Builder<static>|Shipment whereRecipientName($value)
+ * @method static Builder<static>|Shipment whereRecipientPhone($value)
+ * @method static Builder<static>|Shipment whereRecipientPostalCode($value)
+ * @method static Builder<static>|Shipment whereRecipientProvince($value)
+ * @method static Builder<static>|Shipment whereReturnReason($value)
+ * @method static Builder<static>|Shipment whereServiceCode($value)
+ * @method static Builder<static>|Shipment whereServiceName($value)
+ * @method static Builder<static>|Shipment whereShipmentNumber($value)
+ * @method static Builder<static>|Shipment whereShippedAt($value)
+ * @method static Builder<static>|Shipment whereShippingCost($value)
+ * @method static Builder<static>|Shipment whereShippingMethodId($value)
+ * @method static Builder<static>|Shipment whereSignedProof($value)
+ * @method static Builder<static>|Shipment whereStatus($value)
+ * @method static Builder<static>|Shipment whereTrackingNumber($value)
+ * @method static Builder<static>|Shipment whereTrackingUrl($value)
+ * @method static Builder<static>|Shipment whereUpdatedAt($value)
+ * @method static Builder<static>|Shipment whereWeight($value)
+ * @method static Builder<static>|Shipment withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Shipment withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Shipment extends Model
 {
     use HasFactory;

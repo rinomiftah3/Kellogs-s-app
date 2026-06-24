@@ -21,6 +21,80 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property int|null $shipping_address_id
+ * @property string $session_code
+ * @property string $status
+ * @property string|null $voucher_code
+ * @property numeric $voucher_discount
+ * @property numeric $promotion_discount
+ * @property numeric $subtotal
+ * @property numeric $shipping_cost
+ * @property numeric $total_discount
+ * @property numeric $grand_total
+ * @property string|null $courier_code
+ * @property string|null $courier_service
+ * @property int $total_weight
+ * @property bool $is_price_valid
+ * @property bool $is_stock_valid
+ * @property bool $is_voucher_valid
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $expired_at
+ * @property \Illuminate\Support\Carbon|null $checked_out_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customerProfile
+ * @property-read bool $is_checked_out
+ * @property-read bool $is_expired
+ * @property-read bool $is_ready
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CheckoutItem> $items
+ * @property-read int|null $items_count
+ * @property-read \App\Models\CustomerAddress|null $shippingAddress
+ * @method static Builder<static>|CheckoutSession active()
+ * @method static Builder<static>|CheckoutSession byCustomer(?int $customerId)
+ * @method static Builder<static>|CheckoutSession checkedOut()
+ * @method static Builder<static>|CheckoutSession draft()
+ * @method static Builder<static>|CheckoutSession expired()
+ * @method static \Database\Factories\CheckoutSessionFactory factory($count = null, $state = [])
+ * @method static Builder<static>|CheckoutSession latestFirst()
+ * @method static Builder<static>|CheckoutSession newModelQuery()
+ * @method static Builder<static>|CheckoutSession newQuery()
+ * @method static Builder<static>|CheckoutSession onlyTrashed()
+ * @method static Builder<static>|CheckoutSession query()
+ * @method static Builder<static>|CheckoutSession ready()
+ * @method static Builder<static>|CheckoutSession valid()
+ * @method static Builder<static>|CheckoutSession whereCheckedOutAt($value)
+ * @method static Builder<static>|CheckoutSession whereCourierCode($value)
+ * @method static Builder<static>|CheckoutSession whereCourierService($value)
+ * @method static Builder<static>|CheckoutSession whereCreatedAt($value)
+ * @method static Builder<static>|CheckoutSession whereCustomerProfileId($value)
+ * @method static Builder<static>|CheckoutSession whereDeletedAt($value)
+ * @method static Builder<static>|CheckoutSession whereExpiredAt($value)
+ * @method static Builder<static>|CheckoutSession whereGrandTotal($value)
+ * @method static Builder<static>|CheckoutSession whereId($value)
+ * @method static Builder<static>|CheckoutSession whereIsPriceValid($value)
+ * @method static Builder<static>|CheckoutSession whereIsStockValid($value)
+ * @method static Builder<static>|CheckoutSession whereIsVoucherValid($value)
+ * @method static Builder<static>|CheckoutSession whereNotes($value)
+ * @method static Builder<static>|CheckoutSession wherePromotionDiscount($value)
+ * @method static Builder<static>|CheckoutSession whereSessionCode($value)
+ * @method static Builder<static>|CheckoutSession whereShippingAddressId($value)
+ * @method static Builder<static>|CheckoutSession whereShippingCost($value)
+ * @method static Builder<static>|CheckoutSession whereStatus($value)
+ * @method static Builder<static>|CheckoutSession whereSubtotal($value)
+ * @method static Builder<static>|CheckoutSession whereTotalDiscount($value)
+ * @method static Builder<static>|CheckoutSession whereTotalWeight($value)
+ * @method static Builder<static>|CheckoutSession whereUpdatedAt($value)
+ * @method static Builder<static>|CheckoutSession whereVoucherCode($value)
+ * @method static Builder<static>|CheckoutSession whereVoucherDiscount($value)
+ * @method static Builder<static>|CheckoutSession withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|CheckoutSession withoutTrashed()
+ * @mixin \Eloquent
  */
 class CheckoutSession extends Model
 {

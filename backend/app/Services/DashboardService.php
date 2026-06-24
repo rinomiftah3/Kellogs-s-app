@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\Product;
+use App\Models\Activity;
 use App\Models\Category;
-
+use App\Models\Product;
+use App\Models\User;
+use App\Models\CustomerProfile;
+use App\Models\Payment;
+use App\Models\Order;
 use Carbon\Carbon;
-
 use Illuminate\Support\Facades\Cache;
-
-use Spatie\Activitylog\Models\Activity;
 
 class DashboardService
 {
@@ -34,7 +34,6 @@ class DashboardService
             self::CACHE_KEY,
             self::CACHE_TTL,
             fn () => [
-
                 'statistics' =>
                     $this->statistics(),
 
@@ -43,9 +42,6 @@ class DashboardService
 
                 'charts' =>
                     $this->charts(),
-
-                'low_stock_products' =>
-                    $this->lowStockProducts(),
 
                 'recent_activities' =>
                     $this->recentActivities(),
@@ -59,19 +55,14 @@ class DashboardService
     private function statistics(): array
     {
         return [
-
-            'users' =>
-                User::count(),
-
-            'categories' =>
-                Category::count(),
-
-            'products' =>
-                Product::count(),
-
-            'activity_logs' =>
-                Activity::count(),
-        ];
+        'users'          => User::count(),
+        'customers'      => CustomerProfile::count(),
+        'categories'     => Category::count(),
+        'products'       => Product::count(),
+        'orders'         => Order::count(),
+        'payments'       => Payment::count(),
+        'activity_logs'  => Activity::count(),
+    ];
     }
 
     /**
@@ -80,23 +71,22 @@ class DashboardService
     private function growth(): array
     {
         return [
-
             'new_users_today' =>
                 User::whereDate(
                     'created_at',
-                    today()
+                    Carbon::today()
                 )->count(),
 
             'new_products_today' =>
                 Product::whereDate(
                     'created_at',
-                    today()
+                    Carbon::today()
                 )->count(),
 
             'new_activities_today' =>
                 Activity::whereDate(
                     'created_at',
-                    today()
+                    Carbon::today()
                 )->count(),
         ];
     }
@@ -107,32 +97,29 @@ class DashboardService
     private function charts(): array
     {
         return [
-
             'activity_chart' =>
                 $this->activityChart(),
 
             'user_chart' =>
                 $this->userChart(),
 
-            'product_chart' =>
-                $this->productChart(),
+            'products_by_category_chart' =>
+                $this->productsByCategoryChart(),
         ];
     }
 
     /**
-     * Activity chart.
+     * Activity chart (last 7 days).
      */
     private function activityChart(): array
     {
         $chart = [];
 
         for ($i = 6; $i >= 0; $i--) {
-
             $date = Carbon::now()
                 ->subDays($i);
 
             $chart[] = [
-
                 'date' =>
                     $date->format('d M'),
 
@@ -148,19 +135,17 @@ class DashboardService
     }
 
     /**
-     * User chart.
+     * User registration chart (last 7 days).
      */
     private function userChart(): array
     {
         $chart = [];
 
         for ($i = 6; $i >= 0; $i--) {
-
             $date = Carbon::now()
                 ->subDays($i);
 
             $chart[] = [
-
                 'date' =>
                     $date->format('d M'),
 
@@ -176,23 +161,20 @@ class DashboardService
     }
 
     /**
-     * Product chart.
+     * Products grouped by category.
      */
-    private function productChart(): array
+    private function productsByCategoryChart(): array
     {
         return Category::query()
-
-            ->withCount(
-                'products'
+            ->withCount('products')
+            ->orderByDesc(
+                'products_count'
             )
-
             ->get()
-
             ->map(
                 fn (
                     Category $category
                 ) => [
-
                     'name' =>
                         $category->name,
 
@@ -200,57 +182,48 @@ class DashboardService
                         $category->products_count,
                 ]
             )
-
             ->values()
-
             ->toArray();
     }
 
     /**
-     * Low stock widget.
+     * Recent activities widget.
      */
-    private function lowStockProducts()
-    {
-        return Product::query()
-
-            ->with(
-                'category'
-            )
-
-            ->where(
-                'stock',
-                '<=',
-                10
-            )
-
-            ->latest()
-
-            ->limit(10)
-
-            ->get([
-                'id',
-                'category_id',
-                'name',
-                'stock',
-            ]);
-    }
-
-    /**
-     * Recent activity widget.
-     */
-    private function recentActivities()
+    private function recentActivities(): array
     {
         return Activity::query()
-
-            ->with(
-                'causer'
-            )
-
+            ->with('causer')
             ->latest()
-
             ->limit(10)
+            ->get()
+            ->map(
+                fn (
+                    Activity $activity
+                ) => [
+                    'id' =>
+                        $activity->id,
 
-            ->get();
+                    'event' =>
+                        $activity->event,
+
+                    'description' =>
+                        $activity->description,
+
+                    'causer' => [
+                        'id' =>
+                            $activity->causer?->id,
+
+                        'name' =>
+                            $activity->causer?->name,
+                    ],
+
+                    'created_at' =>
+                        $activity->created_at
+                            ?->toISOString(),
+                ]
+            )
+            ->values()
+            ->toArray();
     }
 
     /**

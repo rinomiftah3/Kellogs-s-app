@@ -11,6 +11,69 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $payment_id
+ * @property string $gateway
+ * @property string|null $event_type
+ * @property string|null $gateway_transaction_id
+ * @property string|null $gateway_order_id
+ * @property string $status
+ * @property string|null $http_method
+ * @property int|null $http_status
+ * @property string|null $ip_address
+ * @property string|null $user_agent
+ * @property string|null $signature
+ * @property bool $signature_valid
+ * @property array<array-key, mixed>|null $headers
+ * @property array<array-key, mixed>|null $payload
+ * @property array<array-key, mixed>|null $processing_result
+ * @property string|null $error_message
+ * @property \Illuminate\Support\Carbon $received_at
+ * @property \Illuminate\Support\Carbon|null $processed_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read bool $is_processed
+ * @property-read bool $is_verified
+ * @property-read \App\Models\Payment|null $payment
+ * @method static Builder<static>|PaymentCallback failed()
+ * @method static Builder<static>|PaymentCallback gateway(?string $gateway)
+ * @method static Builder<static>|PaymentCallback ignored()
+ * @method static Builder<static>|PaymentCallback latestReceived()
+ * @method static Builder<static>|PaymentCallback newModelQuery()
+ * @method static Builder<static>|PaymentCallback newQuery()
+ * @method static Builder<static>|PaymentCallback processed()
+ * @method static Builder<static>|PaymentCallback query()
+ * @method static Builder<static>|PaymentCallback search(?string $keyword)
+ * @method static Builder<static>|PaymentCallback status(?string $status)
+ * @method static Builder<static>|PaymentCallback verified()
+ * @method static Builder<static>|PaymentCallback whereCreatedAt($value)
+ * @method static Builder<static>|PaymentCallback whereErrorMessage($value)
+ * @method static Builder<static>|PaymentCallback whereEventType($value)
+ * @method static Builder<static>|PaymentCallback whereGateway($value)
+ * @method static Builder<static>|PaymentCallback whereGatewayOrderId($value)
+ * @method static Builder<static>|PaymentCallback whereGatewayTransactionId($value)
+ * @method static Builder<static>|PaymentCallback whereHeaders($value)
+ * @method static Builder<static>|PaymentCallback whereHttpMethod($value)
+ * @method static Builder<static>|PaymentCallback whereHttpStatus($value)
+ * @method static Builder<static>|PaymentCallback whereId($value)
+ * @method static Builder<static>|PaymentCallback whereIpAddress($value)
+ * @method static Builder<static>|PaymentCallback whereMetadata($value)
+ * @method static Builder<static>|PaymentCallback wherePayload($value)
+ * @method static Builder<static>|PaymentCallback wherePaymentId($value)
+ * @method static Builder<static>|PaymentCallback whereProcessedAt($value)
+ * @method static Builder<static>|PaymentCallback whereProcessingResult($value)
+ * @method static Builder<static>|PaymentCallback whereReceivedAt($value)
+ * @method static Builder<static>|PaymentCallback whereSignature($value)
+ * @method static Builder<static>|PaymentCallback whereSignatureValid($value)
+ * @method static Builder<static>|PaymentCallback whereStatus($value)
+ * @method static Builder<static>|PaymentCallback whereUpdatedAt($value)
+ * @method static Builder<static>|PaymentCallback whereUserAgent($value)
+ * @mixin \Eloquent
+ */
 class PaymentCallback extends Model
 {
     use HasFactory;

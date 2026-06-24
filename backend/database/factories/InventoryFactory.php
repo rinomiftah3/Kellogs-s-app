@@ -41,6 +41,11 @@ class InventoryFactory extends Factory
             min(50, $currentStock)
         );
 
+        $minimumStock = fake()->numberBetween(
+            5,
+            20
+        );
+
         return [
 
             'product_sku_id'
@@ -56,21 +61,20 @@ class InventoryFactory extends Factory
                 => $currentStock - $reservedStock,
 
             'minimum_stock'
-                => fake()->numberBetween(
-                    5,
-                    20
-                ),
+                => $minimumStock,
 
             'maximum_stock'
-                => fake()->numberBetween(
-                    500,
-                    1000
-                ),
+                => fake()
+                    ->optional()
+                    ->numberBetween(
+                        500,
+                        1000
+                    ),
 
             'reorder_point'
                 => fake()->numberBetween(
-                    10,
-                    30
+                    $minimumStock,
+                    $minimumStock + 20
                 ),
 
             'allow_backorder'
@@ -92,7 +96,8 @@ class InventoryFactory extends Factory
         return $this->state(
             fn () => [
 
-                'is_active' => true,
+                'is_active'
+                    => true,
             ]
         );
     }
@@ -102,7 +107,8 @@ class InventoryFactory extends Factory
         return $this->state(
             fn () => [
 
-                'is_active' => false,
+                'is_active'
+                    => false,
             ]
         );
     }
@@ -118,12 +124,12 @@ class InventoryFactory extends Factory
         return $this->state(
             function () {
 
-                $current = fake()->numberBetween(
+                $currentStock = fake()->numberBetween(
                     100,
                     500
                 );
 
-                $reserved = fake()->numberBetween(
+                $reservedStock = fake()->numberBetween(
                     0,
                     20
                 );
@@ -131,19 +137,28 @@ class InventoryFactory extends Factory
                 return [
 
                     'current_stock'
-                        => $current,
+                        => $currentStock,
 
                     'reserved_stock'
-                        => $reserved,
+                        => $reservedStock,
 
                     'available_stock'
-                        => $current - $reserved,
+                        => $currentStock - $reservedStock,
 
                     'minimum_stock'
                         => 10,
 
+                    'maximum_stock'
+                        => 500,
+
                     'reorder_point'
                         => 20,
+
+                    'allow_backorder'
+                        => false,
+
+                    'is_active'
+                        => true,
                 ];
             }
         );
@@ -154,15 +169,29 @@ class InventoryFactory extends Factory
         return $this->state(
             fn () => [
 
-                'current_stock' => 10,
+                'current_stock'
+                    => 15,
 
-                'reserved_stock' => 2,
+                'reserved_stock'
+                    => 5,
 
-                'available_stock' => 8,
+                'available_stock'
+                    => 10,
 
-                'minimum_stock' => 10,
+                'minimum_stock'
+                    => 10,
 
-                'reorder_point' => 15,
+                'maximum_stock'
+                    => 500,
+
+                'reorder_point'
+                    => 15,
+
+                'allow_backorder'
+                    => false,
+
+                'is_active'
+                    => true,
             ]
         );
     }
@@ -172,15 +201,29 @@ class InventoryFactory extends Factory
         return $this->state(
             fn () => [
 
-                'current_stock' => 0,
+                'current_stock'
+                    => 0,
 
-                'reserved_stock' => 0,
+                'reserved_stock'
+                    => 0,
 
-                'available_stock' => 0,
+                'available_stock'
+                    => 0,
 
-                'minimum_stock' => 10,
+                'minimum_stock'
+                    => 10,
 
-                'reorder_point' => 15,
+                'maximum_stock'
+                    => 500,
+
+                'reorder_point'
+                    => 15,
+
+                'allow_backorder'
+                    => false,
+
+                'is_active'
+                    => true,
             ]
         );
     }
@@ -196,7 +239,8 @@ class InventoryFactory extends Factory
         return $this->state(
             fn () => [
 
-                'allow_backorder' => true,
+                'allow_backorder'
+                    => true,
             ]
         );
     }
@@ -206,7 +250,8 @@ class InventoryFactory extends Factory
         return $this->state(
             fn () => [
 
-                'allow_backorder' => false,
+                'allow_backorder'
+                    => false,
             ]
         );
     }

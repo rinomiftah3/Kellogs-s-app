@@ -63,8 +63,13 @@ class CustomerSeeder extends Seeder
                     'name' => $customer['name'],
                     'password' => bcrypt('password'),
                     'email_verified_at' => now(),
+                    'is_active' => true,
                 ]
             );
+
+            $user->syncRoles([
+                User::ROLE_CUSTOMER
+            ]);
 
             $profile = CustomerProfile::updateOrCreate(
                 [

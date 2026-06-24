@@ -12,6 +12,43 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $product_id
+ * @property string $name
+ * @property string|null $code
+ * @property int $sort_order
+ * @property bool $is_required
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Product|null $product
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductOptionValue> $values
+ * @property-read int|null $values_count
+ * @method static Builder<static>|ProductOption active()
+ * @method static Builder<static>|ProductOption byProduct(?int $productId)
+ * @method static Builder<static>|ProductOption inactive()
+ * @method static Builder<static>|ProductOption newModelQuery()
+ * @method static Builder<static>|ProductOption newQuery()
+ * @method static Builder<static>|ProductOption optional()
+ * @method static Builder<static>|ProductOption ordered()
+ * @method static Builder<static>|ProductOption query()
+ * @method static Builder<static>|ProductOption required()
+ * @method static Builder<static>|ProductOption requiredFirst()
+ * @method static Builder<static>|ProductOption search(?string $keyword)
+ * @method static Builder<static>|ProductOption whereCode($value)
+ * @method static Builder<static>|ProductOption whereCreatedAt($value)
+ * @method static Builder<static>|ProductOption whereId($value)
+ * @method static Builder<static>|ProductOption whereIsActive($value)
+ * @method static Builder<static>|ProductOption whereIsRequired($value)
+ * @method static Builder<static>|ProductOption whereName($value)
+ * @method static Builder<static>|ProductOption whereProductId($value)
+ * @method static Builder<static>|ProductOption whereSortOrder($value)
+ * @method static Builder<static>|ProductOption whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class ProductOption extends Model
 {
     use HasFactory;

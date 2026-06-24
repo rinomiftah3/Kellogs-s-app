@@ -3,14 +3,11 @@
 namespace App\Services;
 
 use App\Models\User;
-
 use Illuminate\Http\UploadedFile;
-
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Validation\ValidationException;
 
 class ProfileService
@@ -21,7 +18,6 @@ class ProfileService
     public function show(
         User $user
     ): array {
-
         return $this->profilePayload(
             $user->fresh()->loadMissing([
                 'roles.permissions',
@@ -36,15 +32,12 @@ class ProfileService
         User $user,
         array $data
     ): array {
-
         return DB::transaction(
             function () use (
                 $user,
                 $data
             ) {
-
                 $oldData = [
-
                     'name' =>
                         $user->name,
 
@@ -52,30 +45,44 @@ class ProfileService
                         $user->email,
                 ];
 
-                $user->update([
+                $payload = [
                     'name' =>
                         $data['name'],
 
                     'email' =>
                         $data['email'],
-                ]);
+                ];
+
+                /*
+                |--------------------------------------------------------------------------
+                | Reset Email Verification
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $user->email !==
+                    $data['email']
+                ) {
+                    $payload[
+                        'email_verified_at'
+                    ] = null;
+                }
+
+                $user->update(
+                    $payload
+                );
 
                 activity()
-
                     ->causedBy($user)
-
                     ->performedOn($user)
-
                     ->event(
                         'profile_updated'
                     )
-
                     ->withProperties([
                         'old' =>
                             $oldData,
 
                         'attributes' => [
-
                             'name' =>
                                 $user->name,
 
@@ -83,7 +90,6 @@ class ProfileService
                                 $user->email,
                         ],
                     ])
-
                     ->log(
                         'User updated profile'
                     );
@@ -106,14 +112,12 @@ class ProfileService
         User $user,
         array $data
     ): void {
-
         if (
-            !Hash::check(
+            ! Hash::check(
                 $data['current_password'],
                 $user->password
             )
         ) {
-
             throw ValidationException::withMessages([
                 'current_password' => [
                     'Password lama tidak sesuai.',
@@ -126,22 +130,19 @@ class ProfileService
                 $user,
                 $data
             ) {
-
                 $user->update([
                     'password' =>
-                        $data['new_password'],
+                        Hash::make(
+                            $data['password']
+                        ),
                 ]);
 
                 activity()
-
                     ->causedBy($user)
-
                     ->performedOn($user)
-
                     ->event(
                         'password_updated'
                     )
-
                     ->log(
                         'User changed password'
                     );
@@ -168,51 +169,54 @@ class ProfileService
         User $user,
         UploadedFile $avatar
     ): array {
-
         return DB::transaction(
             function () use (
                 $user,
                 $avatar
             ) {
-
                 $oldAvatar =
                     $user->avatar;
 
-                $path = $avatar->store(
-                    'avatars',
+                $disk = env(
+                    'AVATAR_DISK',
                     'public'
                 );
 
+                $path = $avatar->store(
+                    'users/avatars',
+                    $disk
+                );
+
                 $user->update([
-                    'avatar' => $path,
+                    'avatar' =>
+                        $path,
                 ]);
 
                 if (
-                    $oldAvatar &&
-                    Storage::disk(
-                        'public'
-                    )->exists(
-                        $oldAvatar
+                    filled($oldAvatar)
+                    &&
+                    ! str_starts_with(
+                        $oldAvatar,
+                        'http'
                     )
+                    &&
+                    Storage::disk('public')
+                        ->exists(
+                            $oldAvatar
+                        )
                 ) {
-
-                    Storage::disk(
-                        'public'
-                    )->delete(
-                        $oldAvatar
-                    );
+                    Storage::disk('public')
+                        ->delete(
+                            $oldAvatar
+                        );
                 }
 
                 activity()
-
                     ->causedBy($user)
-
                     ->performedOn($user)
-
                     ->event(
                         'avatar_uploaded'
                     )
-
                     ->withProperties([
                         'old_avatar' =>
                             $oldAvatar,
@@ -220,7 +224,6 @@ class ProfileService
                         'new_avatar' =>
                             $path,
                     ])
-
                     ->log(
                         'User uploaded avatar'
                     );
@@ -242,29 +245,30 @@ class ProfileService
     public function deleteAvatar(
         User $user
     ): array {
-
         return DB::transaction(
             function () use (
                 $user
             ) {
-
                 $oldAvatar =
                     $user->avatar;
 
                 if (
-                    $oldAvatar &&
-                    Storage::disk(
-                        'public'
-                    )->exists(
-                        $oldAvatar
+                    filled($oldAvatar)
+                    &&
+                    ! str_starts_with(
+                        $oldAvatar,
+                        'http'
                     )
+                    &&
+                    Storage::disk('public')
+                        ->exists(
+                            $oldAvatar
+                        )
                 ) {
-
-                    Storage::disk(
-                        'public'
-                    )->delete(
-                        $oldAvatar
-                    );
+                    Storage::disk('public')
+                        ->delete(
+                            $oldAvatar
+                        );
                 }
 
                 $user->update([
@@ -272,20 +276,15 @@ class ProfileService
                 ]);
 
                 activity()
-
                     ->causedBy($user)
-
                     ->performedOn($user)
-
                     ->event(
                         'avatar_deleted'
                     )
-
                     ->withProperties([
                         'old_avatar' =>
                             $oldAvatar,
                     ])
-
                     ->log(
                         'User deleted avatar'
                     );
@@ -307,11 +306,11 @@ class ProfileService
     public function statistics(
         User $user
     ): array {
-
         return [
-
             'roles_count' =>
-                $user->roles()->count(),
+                $user
+                    ->roles()
+                    ->count(),
 
             'permissions_count' =>
                 $user
@@ -319,12 +318,15 @@ class ProfileService
                     ->count(),
 
             'is_verified' =>
-                !is_null(
-                    $user->email_verified_at
-                ),
+                $user->isVerified(),
+
+            'is_online' =>
+                $user->isOnline(),
 
             'last_login_at' =>
-                $user->last_login_at,
+                $user
+                    ->last_login_at
+                    ?->toISOString(),
         ];
     }
 
@@ -334,9 +336,7 @@ class ProfileService
     private function profilePayload(
         User $user
     ): array {
-
         return [
-
             'id' =>
                 $user->id,
 
@@ -364,16 +364,20 @@ class ProfileService
                     ->values(),
 
             'is_active' =>
-                (bool) (
-                    $user->is_active
-                    ?? true
-                ),
+                $user->isActive(),
+
+            'is_verified' =>
+                $user->isVerified(),
 
             'email_verified_at' =>
-                $user->email_verified_at,
+                $user
+                    ->email_verified_at
+                    ?->toISOString(),
 
             'last_login_at' =>
-                $user->last_login_at,
+                $user
+                    ->last_login_at
+                    ?->toISOString(),
         ];
     }
 

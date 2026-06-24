@@ -18,6 +18,59 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * ProductReview Model
  *
  * Enterprise Review System
+ *
+ * @property int $id
+ * @property int $product_id
+ * @property int $customer_profile_id
+ * @property int $rating
+ * @property string|null $title
+ * @property string|null $review
+ * @property bool $is_verified_purchase
+ * @property string $status
+ * @property string|null $moderation_notes
+ * @property int $helpful_count
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customer
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductReviewImage> $images
+ * @property-read int|null $images_count
+ * @property-read \App\Models\Product|null $product
+ * @method static Builder<static>|ProductReview approved()
+ * @method static Builder<static>|ProductReview byCustomer(?int $customerId)
+ * @method static Builder<static>|ProductReview byProduct(?int $productId)
+ * @method static Builder<static>|ProductReview helpful()
+ * @method static Builder<static>|ProductReview highestRated()
+ * @method static Builder<static>|ProductReview latestReview()
+ * @method static Builder<static>|ProductReview lowestRated()
+ * @method static Builder<static>|ProductReview newModelQuery()
+ * @method static Builder<static>|ProductReview newQuery()
+ * @method static Builder<static>|ProductReview onlyTrashed()
+ * @method static Builder<static>|ProductReview pending()
+ * @method static Builder<static>|ProductReview query()
+ * @method static Builder<static>|ProductReview rating(?int $rating)
+ * @method static Builder<static>|ProductReview rejected()
+ * @method static Builder<static>|ProductReview verifiedPurchase()
+ * @method static Builder<static>|ProductReview whereCreatedAt($value)
+ * @method static Builder<static>|ProductReview whereCustomerProfileId($value)
+ * @method static Builder<static>|ProductReview whereDeletedAt($value)
+ * @method static Builder<static>|ProductReview whereHelpfulCount($value)
+ * @method static Builder<static>|ProductReview whereId($value)
+ * @method static Builder<static>|ProductReview whereIsVerifiedPurchase($value)
+ * @method static Builder<static>|ProductReview whereModerationNotes($value)
+ * @method static Builder<static>|ProductReview whereProductId($value)
+ * @method static Builder<static>|ProductReview whereRating($value)
+ * @method static Builder<static>|ProductReview whereReview($value)
+ * @method static Builder<static>|ProductReview whereStatus($value)
+ * @method static Builder<static>|ProductReview whereTitle($value)
+ * @method static Builder<static>|ProductReview whereUpdatedAt($value)
+ * @method static Builder<static>|ProductReview withImages()
+ * @method static Builder<static>|ProductReview withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|ProductReview withoutImages()
+ * @method static Builder<static>|ProductReview withoutTrashed()
+ * @mixin \Eloquent
  */
 class ProductReview extends Model
 {
@@ -121,7 +174,7 @@ class ProductReview extends Model
         );
     }
 
-    public function customer(): BelongsTo
+    public function customerProfile(): BelongsTo
     {
         return $this->belongsTo(
             CustomerProfile::class,
@@ -295,7 +348,7 @@ class ProductReview extends Model
 
     public function customerName(): ?string
     {
-        return $this->customer?->full_name;
+        return $this->customerProfile?->full_name;
     }
 
     public function productName(): ?string

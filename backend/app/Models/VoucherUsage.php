@@ -21,6 +21,64 @@ use Spatie\Activitylog\Support\LogOptions;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $voucher_id
+ * @property int $customer_profile_id
+ * @property int|null $order_id
+ * @property string $voucher_code
+ * @property string $voucher_name
+ * @property numeric $discount_amount
+ * @property numeric $order_subtotal
+ * @property numeric $order_total
+ * @property string $status
+ * @property bool $is_valid
+ * @property \Illuminate\Support\Carbon $used_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customerProfile
+ * @property-read float $saving_amount
+ * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\Voucher|null $voucher
+ * @method static Builder<static>|VoucherUsage byCustomer(?int $customerId)
+ * @method static Builder<static>|VoucherUsage byStatus(?string $status)
+ * @method static Builder<static>|VoucherUsage byVoucher(?int $voucherId)
+ * @method static Builder<static>|VoucherUsage cancelled()
+ * @method static Builder<static>|VoucherUsage expired()
+ * @method static Builder<static>|VoucherUsage invalid()
+ * @method static Builder<static>|VoucherUsage latestFirst()
+ * @method static Builder<static>|VoucherUsage newModelQuery()
+ * @method static Builder<static>|VoucherUsage newQuery()
+ * @method static Builder<static>|VoucherUsage onlyTrashed()
+ * @method static Builder<static>|VoucherUsage query()
+ * @method static Builder<static>|VoucherUsage reserved()
+ * @method static Builder<static>|VoucherUsage used()
+ * @method static Builder<static>|VoucherUsage valid()
+ * @method static Builder<static>|VoucherUsage whereCreatedAt($value)
+ * @method static Builder<static>|VoucherUsage whereCustomerProfileId($value)
+ * @method static Builder<static>|VoucherUsage whereDeletedAt($value)
+ * @method static Builder<static>|VoucherUsage whereDiscountAmount($value)
+ * @method static Builder<static>|VoucherUsage whereId($value)
+ * @method static Builder<static>|VoucherUsage whereIsValid($value)
+ * @method static Builder<static>|VoucherUsage whereMetadata($value)
+ * @method static Builder<static>|VoucherUsage whereNotes($value)
+ * @method static Builder<static>|VoucherUsage whereOrderId($value)
+ * @method static Builder<static>|VoucherUsage whereOrderSubtotal($value)
+ * @method static Builder<static>|VoucherUsage whereOrderTotal($value)
+ * @method static Builder<static>|VoucherUsage whereStatus($value)
+ * @method static Builder<static>|VoucherUsage whereUpdatedAt($value)
+ * @method static Builder<static>|VoucherUsage whereUsedAt($value)
+ * @method static Builder<static>|VoucherUsage whereVoucherCode($value)
+ * @method static Builder<static>|VoucherUsage whereVoucherId($value)
+ * @method static Builder<static>|VoucherUsage whereVoucherName($value)
+ * @method static Builder<static>|VoucherUsage withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|VoucherUsage withoutTrashed()
+ * @mixin \Eloquent
  */
 class VoucherUsage extends Model
 {

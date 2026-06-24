@@ -18,6 +18,40 @@ use Spatie\Activitylog\Support\LogOptions;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $promotion_id
+ * @property int $product_id
+ * @property numeric|null $discount_value
+ * @property numeric|null $maximum_discount
+ * @property bool $is_active
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read float $effective_discount
+ * @property-read float|null $effective_maximum_discount
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Promotion|null $promotion
+ * @method static Builder<static>|PromoProduct active()
+ * @method static Builder<static>|PromoProduct byProduct(?int $productId)
+ * @method static Builder<static>|PromoProduct byPromotion(?int $promotionId)
+ * @method static Builder<static>|PromoProduct inactive()
+ * @method static Builder<static>|PromoProduct newModelQuery()
+ * @method static Builder<static>|PromoProduct newQuery()
+ * @method static Builder<static>|PromoProduct query()
+ * @method static Builder<static>|PromoProduct running()
+ * @method static Builder<static>|PromoProduct whereCreatedAt($value)
+ * @method static Builder<static>|PromoProduct whereDiscountValue($value)
+ * @method static Builder<static>|PromoProduct whereId($value)
+ * @method static Builder<static>|PromoProduct whereIsActive($value)
+ * @method static Builder<static>|PromoProduct whereMaximumDiscount($value)
+ * @method static Builder<static>|PromoProduct whereNotes($value)
+ * @method static Builder<static>|PromoProduct whereProductId($value)
+ * @method static Builder<static>|PromoProduct wherePromotionId($value)
+ * @method static Builder<static>|PromoProduct whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class PromoProduct extends Model
 {

@@ -103,8 +103,7 @@ class StorePaymentRequest extends FormRequest
 
                 Rule::in([
                     'midtrans',
-                    'xendit',
-                    'tripay',
+                    
                 ]),
             ],
 

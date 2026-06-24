@@ -20,6 +20,80 @@ use Spatie\Activitylog\Support\LogOptions;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string|null $description
+ * @property string $type
+ * @property numeric $discount_value
+ * @property numeric|null $maximum_discount
+ * @property numeric $minimum_purchase
+ * @property int|null $buy_quantity
+ * @property int|null $free_quantity
+ * @property int|null $usage_limit
+ * @property int $used_count
+ * @property bool $is_active
+ * @property bool $is_featured
+ * @property bool $is_stackable
+ * @property \Illuminate\Support\Carbon $start_at
+ * @property \Illuminate\Support\Carbon $end_at
+ * @property string|null $banner_image
+ * @property int $sort_order
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read string|null $banner_url
+ * @property-read bool $is_running
+ * @property-read int|null $remaining_usage
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PromoCategory> $promoCategories
+ * @property-read int|null $promo_categories_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PromoProduct> $promoProducts
+ * @property-read int|null $promo_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PromoSku> $promoSkus
+ * @property-read int|null $promo_skus_count
+ * @method static Builder<static>|Promotion active()
+ * @method static Builder<static>|Promotion expired()
+ * @method static \Database\Factories\PromotionFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Promotion featured()
+ * @method static Builder<static>|Promotion newModelQuery()
+ * @method static Builder<static>|Promotion newQuery()
+ * @method static Builder<static>|Promotion onlyTrashed()
+ * @method static Builder<static>|Promotion ordered()
+ * @method static Builder<static>|Promotion query()
+ * @method static Builder<static>|Promotion running()
+ * @method static Builder<static>|Promotion search(?string $keyword)
+ * @method static Builder<static>|Promotion started()
+ * @method static Builder<static>|Promotion type(string $type)
+ * @method static Builder<static>|Promotion whereBannerImage($value)
+ * @method static Builder<static>|Promotion whereBuyQuantity($value)
+ * @method static Builder<static>|Promotion whereCode($value)
+ * @method static Builder<static>|Promotion whereCreatedAt($value)
+ * @method static Builder<static>|Promotion whereDeletedAt($value)
+ * @method static Builder<static>|Promotion whereDescription($value)
+ * @method static Builder<static>|Promotion whereDiscountValue($value)
+ * @method static Builder<static>|Promotion whereEndAt($value)
+ * @method static Builder<static>|Promotion whereFreeQuantity($value)
+ * @method static Builder<static>|Promotion whereId($value)
+ * @method static Builder<static>|Promotion whereIsActive($value)
+ * @method static Builder<static>|Promotion whereIsFeatured($value)
+ * @method static Builder<static>|Promotion whereIsStackable($value)
+ * @method static Builder<static>|Promotion whereMaximumDiscount($value)
+ * @method static Builder<static>|Promotion whereMetadata($value)
+ * @method static Builder<static>|Promotion whereMinimumPurchase($value)
+ * @method static Builder<static>|Promotion whereName($value)
+ * @method static Builder<static>|Promotion whereSortOrder($value)
+ * @method static Builder<static>|Promotion whereStartAt($value)
+ * @method static Builder<static>|Promotion whereType($value)
+ * @method static Builder<static>|Promotion whereUpdatedAt($value)
+ * @method static Builder<static>|Promotion whereUsageLimit($value)
+ * @method static Builder<static>|Promotion whereUsedCount($value)
+ * @method static Builder<static>|Promotion withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Promotion withoutTrashed()
+ * @mixin \Eloquent
  */
 class Promotion extends Model
 {

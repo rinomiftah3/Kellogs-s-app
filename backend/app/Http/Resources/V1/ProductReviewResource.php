@@ -86,8 +86,8 @@ class ProductReviewResource extends JsonResource
             */
 
             'images_count' =>
-                $this->imagesCount(),
-
+    $this->images_count
+        ?? $this->images()->count(),
             'has_images' =>
                 $this->hasImages(),
 
@@ -191,14 +191,14 @@ class ProductReviewResource extends JsonResource
 
             'customer' =>
                 $this->whenLoaded(
-                    'customer',
+                    'customerProfile',
                     fn () => [
 
                         'id' =>
-                            $this->customer->id,
+                            $this->customerProfile->id,
 
                         'full_name' =>
-                            $this->customer->full_name,
+                            $this->customerProfile->full_name,
                     ]
                 ),
 

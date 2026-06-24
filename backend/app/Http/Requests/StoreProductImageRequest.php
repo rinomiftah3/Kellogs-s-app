@@ -64,20 +64,6 @@ class StoreProductImageRequest extends FormRequest
     {
         return [
 
-            'product_id' => [
-
-                'bail',
-
-                'required',
-
-                'integer',
-
-                Rule::exists(
-                    'products',
-                    'id'
-                ),
-            ],
-
             'image' => [
 
                 'bail',
@@ -132,12 +118,6 @@ class StoreProductImageRequest extends FormRequest
     {
         return [
 
-            'product_id.required' =>
-                'Produk wajib dipilih.',
-
-            'product_id.exists' =>
-                'Produk tidak ditemukan.',
-
             'image.required' =>
                 'Gambar produk wajib diunggah.',
 
@@ -173,9 +153,6 @@ class StoreProductImageRequest extends FormRequest
     public function attributes(): array
     {
         return [
-
-            'product_id' =>
-                'produk',
 
             'image' =>
                 'gambar',

@@ -18,6 +18,42 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Customer Wishlist
  * Enterprise Ready
+ *
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property int $product_id
+ * @property \Illuminate\Support\Carbon $added_at
+ * @property bool $notify_price_drop
+ * @property bool $notify_back_in_stock
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customer
+ * @property-read \App\Models\Product|null $product
+ * @method static Builder<static>|Wishlist byCustomer(?int $customerId)
+ * @method static Builder<static>|Wishlist byProduct(?int $productId)
+ * @method static Builder<static>|Wishlist latestAdded()
+ * @method static Builder<static>|Wishlist newModelQuery()
+ * @method static Builder<static>|Wishlist newQuery()
+ * @method static Builder<static>|Wishlist notifyBackInStock()
+ * @method static Builder<static>|Wishlist notifyPriceDrop()
+ * @method static Builder<static>|Wishlist onlyTrashed()
+ * @method static Builder<static>|Wishlist query()
+ * @method static Builder<static>|Wishlist whereAddedAt($value)
+ * @method static Builder<static>|Wishlist whereCreatedAt($value)
+ * @method static Builder<static>|Wishlist whereCustomerProfileId($value)
+ * @method static Builder<static>|Wishlist whereDeletedAt($value)
+ * @method static Builder<static>|Wishlist whereId($value)
+ * @method static Builder<static>|Wishlist whereNotifyBackInStock($value)
+ * @method static Builder<static>|Wishlist whereNotifyPriceDrop($value)
+ * @method static Builder<static>|Wishlist whereProductId($value)
+ * @method static Builder<static>|Wishlist whereUpdatedAt($value)
+ * @method static Builder<static>|Wishlist withNotifications()
+ * @method static Builder<static>|Wishlist withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Wishlist withoutTrashed()
+ * @mixin \Eloquent
  */
 class Wishlist extends Model
 {

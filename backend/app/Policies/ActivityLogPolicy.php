@@ -2,104 +2,117 @@
 
 namespace App\Policies;
 
+use App\Models\Activity;
 use App\Models\User;
 
 use Illuminate\Auth\Access\Response;
 
 class ActivityLogPolicy
 {
-    /**
-     * Super Admin bypass.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Before
+    |--------------------------------------------------------------------------
+    */
+
     public function before(
         User $user,
         string $ability
     ): bool|null {
 
         if (
-            method_exists(
-                $user,
-                'hasRole'
-            )
-            &&
-            $user->hasRole(
-                'Super Admin'
-            )
+            method_exists($user, 'isSuperAdmin')
+            && $user->isSuperAdmin()
         ) {
-
             return true;
         }
 
         return null;
     }
 
-    /**
-     * View activity log list.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | View Permissions
+    |--------------------------------------------------------------------------
+    */
+
     public function viewAny(
         User $user
     ): bool {
 
         return $user->can(
-            'activity-logs.view'
+            'activity_logs.view'
         );
     }
 
-    /**
-     * View activity log detail.
-     */
     public function view(
+        User $user,
+        Activity $activity
+    ): bool {
+
+        return $user->can(
+            'activity_logs.view'
+        );
+    }
+
+    public function latest(
         User $user
     ): bool {
 
         return $user->can(
-            'activity-logs.view'
+            'activity_logs.view'
         );
     }
 
-    /**
-     * Export activity logs.
-     */
-    public function export(
+    public function statistics(
         User $user
     ): bool {
 
         return $user->can(
-            'activity-logs.export'
+            'activity_logs.view'
         );
     }
 
-    /**
-     * Delete activity log.
-     */
-    public function delete(
+    public function dashboardSummary(
         User $user
-    ): Response {
+    ): bool {
 
-        if (
-            !$user->can(
-                'activity-logs.delete'
-            )
-        ) {
-
-            return Response::deny(
-                'Anda tidak memiliki izin menghapus activity log.'
-            );
-        }
-
-        return Response::allow();
+        return $user->can(
+            'activity_logs.view'
+        );
     }
 
-    /**
-     * Clean old activity logs.
-     */
+    public function availableEvents(
+        User $user
+    ): bool {
+
+        return $user->can(
+            'activity_logs.view'
+        );
+    }
+
+    public function availableLogNames(
+        User $user
+    ): bool {
+
+        return $user->can(
+            'activity_logs.view'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Maintenance Permissions
+    |--------------------------------------------------------------------------
+    */
+
     public function clean(
         User $user
     ): Response {
 
         if (
-            !$user->can(
-                'activity-logs.clean'
+            ! $user->can(
+                'activity_logs.clean'
             )
         ) {
 
@@ -111,16 +124,13 @@ class ActivityLogPolicy
         return Response::allow();
     }
 
-    /**
-     * Truncate activity logs.
-     */
     public function truncate(
         User $user
     ): Response {
 
         if (
-            !$user->can(
-                'activity-logs.truncate'
+            ! $user->can(
+                'activity_logs.truncate'
             )
         ) {
 
@@ -130,29 +140,5 @@ class ActivityLogPolicy
         }
 
         return Response::allow();
-    }
-
-    /**
-     * View activity statistics.
-     */
-    public function statistics(
-        User $user
-    ): bool {
-
-        return $user->can(
-            'activity-logs.view'
-        );
-    }
-
-    /**
-     * View dashboard activity widget.
-     */
-    public function dashboard(
-        User $user
-    ): bool {
-
-        return $user->can(
-            'activity-logs.view'
-        );
     }
 }

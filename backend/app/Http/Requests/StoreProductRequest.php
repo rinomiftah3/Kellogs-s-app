@@ -37,23 +37,9 @@ class StoreProductRequest extends FormRequest
             (string) $this->input('name')
         );
 
-        $slug = trim(
-            (string) $this->input('slug')
-        );
-
         $status = $this->input('status');
 
         $this->merge([
-
-            'name' => $name,
-
-            'slug' => filled($slug)
-                ? Str::slug($slug)
-                : (
-                    filled($name)
-                        ? Str::slug($name)
-                        : null
-                ),
 
             'short_description' => filled(
                 $this->short_description
@@ -127,22 +113,6 @@ class StoreProductRequest extends FormRequest
                 'min:2',
 
                 'max:255',
-            ],
-
-            'slug' => [
-
-                'bail',
-
-                'required',
-
-                'string',
-
-                'max:255',
-
-                Rule::unique(
-                    'products',
-                    'slug'
-                ),
             ],
 
             'short_description' => [
@@ -235,15 +205,6 @@ class StoreProductRequest extends FormRequest
             'name.max' =>
                 'Nama produk maksimal 255 karakter.',
 
-            'slug.required' =>
-                'Slug produk wajib diisi.',
-
-            'slug.unique' =>
-                'Slug produk sudah digunakan.',
-
-            'slug.max' =>
-                'Slug produk maksimal 255 karakter.',
-
             'short_description.max' =>
                 'Deskripsi singkat maksimal 500 karakter.',
 
@@ -285,9 +246,6 @@ class StoreProductRequest extends FormRequest
 
             'name' =>
                 'nama produk',
-
-            'slug' =>
-                'slug',
 
             'short_description' =>
                 'deskripsi singkat',

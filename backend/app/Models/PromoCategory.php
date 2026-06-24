@@ -18,6 +18,43 @@ use Spatie\Activitylog\Support\LogOptions;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $promotion_id
+ * @property int $category_id
+ * @property numeric|null $discount_value
+ * @property numeric|null $maximum_discount
+ * @property numeric|null $minimum_purchase
+ * @property bool $is_active
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Category|null $category
+ * @property-read float $effective_discount
+ * @property-read float|null $effective_maximum_discount
+ * @property-read float $effective_minimum_purchase
+ * @property-read \App\Models\Promotion|null $promotion
+ * @method static Builder<static>|PromoCategory active()
+ * @method static Builder<static>|PromoCategory byCategory(?int $categoryId)
+ * @method static Builder<static>|PromoCategory byPromotion(?int $promotionId)
+ * @method static Builder<static>|PromoCategory inactive()
+ * @method static Builder<static>|PromoCategory newModelQuery()
+ * @method static Builder<static>|PromoCategory newQuery()
+ * @method static Builder<static>|PromoCategory query()
+ * @method static Builder<static>|PromoCategory running()
+ * @method static Builder<static>|PromoCategory whereCategoryId($value)
+ * @method static Builder<static>|PromoCategory whereCreatedAt($value)
+ * @method static Builder<static>|PromoCategory whereDiscountValue($value)
+ * @method static Builder<static>|PromoCategory whereId($value)
+ * @method static Builder<static>|PromoCategory whereIsActive($value)
+ * @method static Builder<static>|PromoCategory whereMaximumDiscount($value)
+ * @method static Builder<static>|PromoCategory whereMinimumPurchase($value)
+ * @method static Builder<static>|PromoCategory whereNotes($value)
+ * @method static Builder<static>|PromoCategory wherePromotionId($value)
+ * @method static Builder<static>|PromoCategory whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class PromoCategory extends Model
 {

@@ -34,6 +34,28 @@ class CategoryResource extends JsonResource
 
             'parent_id' => $this->parent_id,
 
+            /*
+            |--------------------------------------------------------------------------
+            | Parent Category
+            |--------------------------------------------------------------------------
+            */
+
+            'parent' => $this->whenLoaded(
+                'parent',
+                fn () => $this->parent
+                    ? [
+                        'id' => $this->parent->id,
+                        'name' => $this->parent->name,
+                    ]
+                    : null
+            ),
+
+            /*
+            |--------------------------------------------------------------------------
+            | Backward Compatibility
+            |--------------------------------------------------------------------------
+            */
+
             'parent_name' => $this->whenLoaded(
                 'parent',
                 fn () => $this->parent?->name
@@ -102,7 +124,9 @@ class CategoryResource extends JsonResource
             */
 
             'can_be_deleted' =>
-                ($productsCount ?? 0) === 0,
+                ($productsCount ?? 0) === 0
+                &&
+                ($childrenCount ?? 0) === 0,
 
             /*
             |--------------------------------------------------------------------------

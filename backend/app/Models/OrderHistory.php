@@ -12,6 +12,51 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int|null $user_id
+ * @property string $action
+ * @property string|null $old_status
+ * @property string|null $new_status
+ * @property string|null $description
+ * @property string|null $notes
+ * @property string $source
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read string|null $status_transition
+ * @property-read string $summary_text
+ * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\User|null $user
+ * @method static Builder<static>|OrderHistory admin()
+ * @method static Builder<static>|OrderHistory byAction(?string $action)
+ * @method static Builder<static>|OrderHistory byOrder(?int $orderId)
+ * @method static Builder<static>|OrderHistory bySource(?string $source)
+ * @method static Builder<static>|OrderHistory courier()
+ * @method static Builder<static>|OrderHistory customer()
+ * @method static Builder<static>|OrderHistory latestFirst()
+ * @method static Builder<static>|OrderHistory newModelQuery()
+ * @method static Builder<static>|OrderHistory newQuery()
+ * @method static Builder<static>|OrderHistory paymentGateway()
+ * @method static Builder<static>|OrderHistory query()
+ * @method static Builder<static>|OrderHistory system()
+ * @method static Builder<static>|OrderHistory whereAction($value)
+ * @method static Builder<static>|OrderHistory whereCreatedAt($value)
+ * @method static Builder<static>|OrderHistory whereDescription($value)
+ * @method static Builder<static>|OrderHistory whereId($value)
+ * @method static Builder<static>|OrderHistory whereMetadata($value)
+ * @method static Builder<static>|OrderHistory whereNewStatus($value)
+ * @method static Builder<static>|OrderHistory whereNotes($value)
+ * @method static Builder<static>|OrderHistory whereOldStatus($value)
+ * @method static Builder<static>|OrderHistory whereOrderId($value)
+ * @method static Builder<static>|OrderHistory whereSource($value)
+ * @method static Builder<static>|OrderHistory whereUpdatedAt($value)
+ * @method static Builder<static>|OrderHistory whereUserId($value)
+ * @mixin \Eloquent
+ */
 class OrderHistory extends Model
 {
     use HasFactory;

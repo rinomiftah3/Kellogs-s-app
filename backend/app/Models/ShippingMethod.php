@@ -14,6 +14,80 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $courier_id
+ * @property string $service_code
+ * @property string $service_name
+ * @property string|null $description
+ * @property int $estimated_min_days
+ * @property int $estimated_max_days
+ * @property bool $supports_tracking
+ * @property bool $supports_cod
+ * @property bool $supports_insurance
+ * @property numeric $base_cost
+ * @property numeric $cost_per_kg
+ * @property int $minimum_weight
+ * @property int|null $maximum_weight
+ * @property numeric|null $free_shipping_threshold
+ * @property int|null $sla_hours
+ * @property int $sort_order
+ * @property bool $is_featured
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Courier|null $courier
+ * @property-read string $delivery_estimation
+ * @property-read string $display_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Shipment> $shipments
+ * @property-read int|null $shipments_count
+ * @method static Builder<static>|ShippingMethod active()
+ * @method static \Database\Factories\ShippingMethodFactory factory($count = null, $state = [])
+ * @method static Builder<static>|ShippingMethod featured()
+ * @method static Builder<static>|ShippingMethod inactive()
+ * @method static Builder<static>|ShippingMethod newModelQuery()
+ * @method static Builder<static>|ShippingMethod newQuery()
+ * @method static Builder<static>|ShippingMethod onlyTrashed()
+ * @method static Builder<static>|ShippingMethod ordered()
+ * @method static Builder<static>|ShippingMethod published()
+ * @method static Builder<static>|ShippingMethod query()
+ * @method static Builder<static>|ShippingMethod search(?string $keyword)
+ * @method static Builder<static>|ShippingMethod supportsCod()
+ * @method static Builder<static>|ShippingMethod supportsInsurance()
+ * @method static Builder<static>|ShippingMethod supportsTracking()
+ * @method static Builder<static>|ShippingMethod whereBaseCost($value)
+ * @method static Builder<static>|ShippingMethod whereCostPerKg($value)
+ * @method static Builder<static>|ShippingMethod whereCourierId($value)
+ * @method static Builder<static>|ShippingMethod whereCreatedAt($value)
+ * @method static Builder<static>|ShippingMethod whereDeletedAt($value)
+ * @method static Builder<static>|ShippingMethod whereDescription($value)
+ * @method static Builder<static>|ShippingMethod whereEstimatedMaxDays($value)
+ * @method static Builder<static>|ShippingMethod whereEstimatedMinDays($value)
+ * @method static Builder<static>|ShippingMethod whereFreeShippingThreshold($value)
+ * @method static Builder<static>|ShippingMethod whereId($value)
+ * @method static Builder<static>|ShippingMethod whereIsActive($value)
+ * @method static Builder<static>|ShippingMethod whereIsFeatured($value)
+ * @method static Builder<static>|ShippingMethod whereMaximumWeight($value)
+ * @method static Builder<static>|ShippingMethod whereMetadata($value)
+ * @method static Builder<static>|ShippingMethod whereMinimumWeight($value)
+ * @method static Builder<static>|ShippingMethod wherePublishedAt($value)
+ * @method static Builder<static>|ShippingMethod whereServiceCode($value)
+ * @method static Builder<static>|ShippingMethod whereServiceName($value)
+ * @method static Builder<static>|ShippingMethod whereSlaHours($value)
+ * @method static Builder<static>|ShippingMethod whereSortOrder($value)
+ * @method static Builder<static>|ShippingMethod whereSupportsCod($value)
+ * @method static Builder<static>|ShippingMethod whereSupportsInsurance($value)
+ * @method static Builder<static>|ShippingMethod whereSupportsTracking($value)
+ * @method static Builder<static>|ShippingMethod whereUpdatedAt($value)
+ * @method static Builder<static>|ShippingMethod withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|ShippingMethod withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ShippingMethod extends Model
 {
     use HasFactory;

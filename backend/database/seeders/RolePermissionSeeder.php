@@ -22,6 +22,7 @@ class RolePermissionSeeder extends Seeder
     private const ROLE_SUPER_ADMIN = 'Super Admin';
     private const ROLE_ADMIN       = 'Admin';
     private const ROLE_STAFF       = 'Staff';
+    private const ROLE_CUSTOMER = 'Customer';
 
     /*
     |--------------------------------------------------------------------------
@@ -86,6 +87,34 @@ class RolePermissionSeeder extends Seeder
             'products.create',
             'products.update',
             'products.delete',
+        ],
+
+        'product_images' => [
+            'product_images.view',
+            'product_images.create',
+            'product_images.update',
+            'product_images.delete',
+        ],
+
+        'product_options' => [
+            'product_options.view',
+            'product_options.create',
+            'product_options.update',
+            'product_options.delete',
+        ],
+
+        'product_option_values' => [
+            'product_option_values.view',
+            'product_option_values.create',
+            'product_option_values.update',
+            'product_option_values.delete',
+        ],
+
+        'product_skus' => [
+            'product_skus.view',
+            'product_skus.create',
+            'product_skus.update',
+            'product_skus.delete',
         ],
 
         'product_reviews' => [
@@ -201,6 +230,13 @@ class RolePermissionSeeder extends Seeder
             'payments.update',
         ],
 
+        'payment_methods' => [
+            'payment_methods.view',
+            'payment_methods.create',
+            'payment_methods.update',
+            'payment_methods.delete',
+        ],
+
         'payment_transactions' => [
             'payment_transactions.view',
         ],
@@ -299,6 +335,10 @@ class RolePermissionSeeder extends Seeder
             'guard_name' => self::GUARD,
         ]);
 
+        $customer = Role::firstOrCreate([
+            'name' => self::ROLE_CUSTOMER,
+            'guard_name' => self::GUARD,
+        ]);
         /*
         |--------------------------------------------------------------------------
         | Super Admin
@@ -343,6 +383,26 @@ class RolePermissionSeeder extends Seeder
             'product_reviews.update',
             'product_reviews.delete',
 
+            'product_images.view',
+            'product_images.create',
+            'product_images.update',
+            'product_images.delete',
+
+            'product_options.view',
+            'product_options.create',
+            'product_options.update',
+            'product_options.delete',
+
+            'product_option_values.view',
+            'product_option_values.create',
+            'product_option_values.update',
+            'product_option_values.delete',
+
+            'product_skus.view',
+            'product_skus.create',
+            'product_skus.update',
+            'product_skus.delete',
+
             'customers.view',
             'customers.create',
             'customers.update',
@@ -384,6 +444,10 @@ class RolePermissionSeeder extends Seeder
 
             'payments.view',
             'payments.update',
+            'payment_methods.view',
+            'payment_methods.create',
+            'payment_methods.update',
+            'payment_methods.delete',
 
             'payment_transactions.view',
 
@@ -424,6 +488,14 @@ class RolePermissionSeeder extends Seeder
 
             'product_reviews.view',
 
+            'product_images.view',
+
+            'product_options.view',
+
+            'product_option_values.view',
+
+            'product_skus.view',
+
             'customers.view',
 
             'customer_addresses.view',
@@ -431,6 +503,7 @@ class RolePermissionSeeder extends Seeder
             'orders.view',
             'orders.update',
 
+            'payment_methods.view',
             'payments.view',
 
             'shipments.view',
@@ -442,7 +515,18 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         $this->resetPermissionCache();
+        
+        /*
+            |--------------------------------------------------------------------------
+            | Customer
+            |--------------------------------------------------------------------------
+            |
+            | Customer hanya digunakan pada aplikasi mobile.
+            | Tidak memiliki permission admin panel.
+            |
+            */
 
+            $customer->syncPermissions([]);
         /*
         |--------------------------------------------------------------------------
         | Logging

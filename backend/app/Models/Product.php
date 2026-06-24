@@ -14,6 +14,70 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $category_id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $short_description
+ * @property string|null $description
+ * @property string|null $thumbnail
+ * @property string $status
+ * @property bool $is_featured
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Category|null $category
+ * @property-read string|null $primary_image_url
+ * @property-read int $review_count
+ * @property-read int $sku_count
+ * @property-read string|null $thumbnail_url
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductImage> $images
+ * @property-read int|null $images_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductOption> $options
+ * @property-read int|null $options_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PromoProduct> $promoProducts
+ * @property-read int|null $promo_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductReview> $reviews
+ * @property-read int|null $reviews_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductSku> $skus
+ * @property-read int|null $skus_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Wishlist> $wishlists
+ * @property-read int|null $wishlists_count
+ * @method static Builder<static>|Product active()
+ * @method static Builder<static>|Product byCategory(?int $categoryId)
+ * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Product featured()
+ * @method static Builder<static>|Product inactive()
+ * @method static Builder<static>|Product newModelQuery()
+ * @method static Builder<static>|Product newQuery()
+ * @method static Builder<static>|Product onlyTrashed()
+ * @method static Builder<static>|Product published()
+ * @method static Builder<static>|Product query()
+ * @method static Builder<static>|Product search(?string $keyword)
+ * @method static Builder<static>|Product status(string $status)
+ * @method static Builder<static>|Product whereCategoryId($value)
+ * @method static Builder<static>|Product whereCreatedAt($value)
+ * @method static Builder<static>|Product whereDeletedAt($value)
+ * @method static Builder<static>|Product whereDescription($value)
+ * @method static Builder<static>|Product whereId($value)
+ * @method static Builder<static>|Product whereIsActive($value)
+ * @method static Builder<static>|Product whereIsFeatured($value)
+ * @method static Builder<static>|Product whereName($value)
+ * @method static Builder<static>|Product wherePublishedAt($value)
+ * @method static Builder<static>|Product whereShortDescription($value)
+ * @method static Builder<static>|Product whereSlug($value)
+ * @method static Builder<static>|Product whereStatus($value)
+ * @method static Builder<static>|Product whereThumbnail($value)
+ * @method static Builder<static>|Product whereUpdatedAt($value)
+ * @method static Builder<static>|Product withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Product withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Product extends Model
 {
     use HasFactory;
@@ -207,12 +271,18 @@ class Product extends Model
 
     public function getReviewCountAttribute(): int
     {
-        return $this->reviews()->count();
+        return (int) (
+            $this->reviews_count
+            ?? $this->reviews()->count()
+        );
     }
 
     public function getSkuCountAttribute(): int
     {
-        return $this->skus()->count();
+        return (int) (
+            $this->skus_count
+            ?? $this->skus()->count()
+        );
     }
 
     /*

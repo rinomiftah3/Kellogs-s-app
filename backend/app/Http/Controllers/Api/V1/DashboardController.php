@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Traits\ApiResponse;
+use App\Http\Controllers\Controller;
 
 use App\Services\DashboardService;
 
-use App\Http\Controllers\Controller;
+use App\Traits\ApiResponse;
 
 class DashboardController extends Controller
 {

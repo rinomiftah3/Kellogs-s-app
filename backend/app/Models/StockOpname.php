@@ -20,6 +20,59 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $product_sku_id
+ * @property string $opname_number
+ * @property \Illuminate\Support\Carbon $opname_date
+ * @property int $system_stock
+ * @property int $physical_stock
+ * @property int $difference
+ * @property string $status
+ * @property string|null $notes
+ * @property int|null $counted_by
+ * @property int|null $verified_by
+ * @property \Illuminate\Support\Carbon|null $verified_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\User|null $counter
+ * @property-read \App\Models\ProductSku|null $sku
+ * @property-read \App\Models\User|null $verifier
+ * @method static Builder<static>|StockOpname bySku(?int $skuId)
+ * @method static Builder<static>|StockOpname byStatus(?string $status)
+ * @method static Builder<static>|StockOpname dateRange($startDate, $endDate)
+ * @method static Builder<static>|StockOpname excess()
+ * @method static Builder<static>|StockOpname latestFirst()
+ * @method static Builder<static>|StockOpname match()
+ * @method static Builder<static>|StockOpname newModelQuery()
+ * @method static Builder<static>|StockOpname newQuery()
+ * @method static Builder<static>|StockOpname onlyTrashed()
+ * @method static Builder<static>|StockOpname query()
+ * @method static Builder<static>|StockOpname shortage()
+ * @method static Builder<static>|StockOpname today()
+ * @method static Builder<static>|StockOpname unverified()
+ * @method static Builder<static>|StockOpname verified()
+ * @method static Builder<static>|StockOpname whereCountedBy($value)
+ * @method static Builder<static>|StockOpname whereCreatedAt($value)
+ * @method static Builder<static>|StockOpname whereDeletedAt($value)
+ * @method static Builder<static>|StockOpname whereDifference($value)
+ * @method static Builder<static>|StockOpname whereId($value)
+ * @method static Builder<static>|StockOpname whereNotes($value)
+ * @method static Builder<static>|StockOpname whereOpnameDate($value)
+ * @method static Builder<static>|StockOpname whereOpnameNumber($value)
+ * @method static Builder<static>|StockOpname wherePhysicalStock($value)
+ * @method static Builder<static>|StockOpname whereProductSkuId($value)
+ * @method static Builder<static>|StockOpname whereStatus($value)
+ * @method static Builder<static>|StockOpname whereSystemStock($value)
+ * @method static Builder<static>|StockOpname whereUpdatedAt($value)
+ * @method static Builder<static>|StockOpname whereVerifiedAt($value)
+ * @method static Builder<static>|StockOpname whereVerifiedBy($value)
+ * @method static Builder<static>|StockOpname withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|StockOpname withoutTrashed()
+ * @mixin \Eloquent
  */
 class StockOpname extends Model
 {

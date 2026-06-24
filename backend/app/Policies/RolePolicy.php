@@ -19,12 +19,8 @@ class RolePolicy
     ): bool|null {
 
         if (
-            method_exists(
-                $user,
-                'hasRole'
-            ) &&
             $user->hasRole(
-                'Super Admin'
+                User::ROLE_SUPER_ADMIN
             )
         ) {
 
@@ -80,7 +76,7 @@ class RolePolicy
     ): Response {
 
         if (
-            !$user->can(
+            ! $user->can(
                 'roles.update'
             )
         ) {
@@ -92,12 +88,21 @@ class RolePolicy
 
         /*
         |--------------------------------------------------------------------------
-        | System Role Protection
+        | Protected Role Protection
         |--------------------------------------------------------------------------
+        |
+        | Sinkron dengan RoleService:
+        | hanya Customer, Admin, Staff,
+        | dan Super Admin yang dianggap
+        | protected role.
+        |
+        | Business rule detail tetap
+        | ditangani oleh service.
+        |
         */
 
         if (
-            $this->isSystemRole(
+            $this->isProtectedRole(
                 $role
             )
         ) {
@@ -119,7 +124,7 @@ class RolePolicy
     ): Response {
 
         if (
-            !$user->can(
+            ! $user->can(
                 'roles.delete'
             )
         ) {
@@ -131,12 +136,12 @@ class RolePolicy
 
         /*
         |--------------------------------------------------------------------------
-        | System Role Protection
+        | Protected Role Protection
         |--------------------------------------------------------------------------
         */
 
         if (
-            $this->isSystemRole(
+            $this->isProtectedRole(
                 $role
             )
         ) {
@@ -153,10 +158,6 @@ class RolePolicy
         */
 
         if (
-            method_exists(
-                $role,
-                'users'
-            ) &&
             $role->users()->exists()
         ) {
 
@@ -169,100 +170,21 @@ class RolePolicy
     }
 
     /**
-     * Restore role.
+     * Check protected role.
      */
-    public function restore(
-        User $user,
-        Role $role
-    ): bool {
-
-        return $user->can(
-            'roles.restore'
-        );
-    }
-
-    /**
-     * Force delete role.
-     */
-    public function forceDelete(
-        User $user,
-        Role $role
-    ): Response {
-
-        if (
-            !$user->can(
-                'roles.force-delete'
-            )
-        ) {
-
-            return Response::deny(
-                'Anda tidak memiliki izin menghapus permanen role.'
-            );
-        }
-
-        if (
-            $this->isSystemRole(
-                $role
-            )
-        ) {
-
-            return Response::deny(
-                'Role sistem tidak dapat dihapus permanen.'
-            );
-        }
-
-        return Response::allow();
-    }
-
-    /**
-     * Manage role permissions.
-     */
-    public function syncPermissions(
-        User $user,
-        Role $role
-    ): Response {
-
-        if (
-            !$user->can(
-                'roles.update'
-            )
-        ) {
-
-            return Response::deny(
-                'Anda tidak memiliki izin mengelola permission role.'
-            );
-        }
-
-        if (
-            $this->isSystemRole(
-                $role
-            )
-        ) {
-
-            return Response::deny(
-                'Permission role sistem tidak dapat diubah.'
-            );
-        }
-
-        return Response::allow();
-    }
-
-    /**
-     * Check system role.
-     */
-    private function isSystemRole(
+    private function isProtectedRole(
         Role $role
     ): bool {
 
         return in_array(
-            strtolower(
-                $role->name
-            ),
+            $role->name,
             [
-                'super admin',
-                'admin',
-                'staff',
-            ]
+                User::ROLE_SUPER_ADMIN,
+                User::ROLE_ADMIN,
+                User::ROLE_STAFF,
+                User::ROLE_CUSTOMER,
+            ],
+            true
         );
     }
 }

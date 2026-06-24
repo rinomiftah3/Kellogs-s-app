@@ -16,6 +16,49 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * Inventory Model
  *
  * Enterprise Inventory Management
+ *
+ * @property int $id
+ * @property int $product_sku_id
+ * @property int $current_stock
+ * @property int $reserved_stock
+ * @property int $available_stock
+ * @property int $minimum_stock
+ * @property int|null $maximum_stock
+ * @property int $reorder_point
+ * @property bool $allow_backorder
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\ProductSku|null $sku
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StockAdjustment> $stockAdjustments
+ * @property-read int|null $stock_adjustments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StockOpname> $stockOpnames
+ * @property-read int|null $stock_opnames_count
+ * @method static Builder<static>|Inventory active()
+ * @method static Builder<static>|Inventory available()
+ * @method static \Database\Factories\InventoryFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Inventory inactive()
+ * @method static Builder<static>|Inventory lowStock()
+ * @method static Builder<static>|Inventory needReorder()
+ * @method static Builder<static>|Inventory newModelQuery()
+ * @method static Builder<static>|Inventory newQuery()
+ * @method static Builder<static>|Inventory outOfStock()
+ * @method static Builder<static>|Inventory query()
+ * @method static Builder<static>|Inventory whereAllowBackorder($value)
+ * @method static Builder<static>|Inventory whereAvailableStock($value)
+ * @method static Builder<static>|Inventory whereCreatedAt($value)
+ * @method static Builder<static>|Inventory whereCurrentStock($value)
+ * @method static Builder<static>|Inventory whereId($value)
+ * @method static Builder<static>|Inventory whereIsActive($value)
+ * @method static Builder<static>|Inventory whereMaximumStock($value)
+ * @method static Builder<static>|Inventory whereMinimumStock($value)
+ * @method static Builder<static>|Inventory whereProductSkuId($value)
+ * @method static Builder<static>|Inventory whereReorderPoint($value)
+ * @method static Builder<static>|Inventory whereReservedStock($value)
+ * @method static Builder<static>|Inventory whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Inventory extends Model
 {
@@ -242,7 +285,12 @@ class Inventory extends Model
         return (bool)
             $this->allow_backorder;
     }
+public function canReduceTo(
+    int $stock
+): bool {
 
+    return $stock >= $this->reserved_stock;
+}
     public function needsReorder(): bool
     {
         return $this->available_stock

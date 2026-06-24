@@ -58,7 +58,7 @@ class UpdateProductReviewRequest extends FormRequest
 
             'rating' => [
 
-                'required',
+                'sometimes',
 
                 'integer',
 
@@ -81,27 +81,26 @@ class UpdateProductReviewRequest extends FormRequest
                 'string',
             ],
 
-            'status' => [
+/*
+|--------------------------------------------------------------------------
+| Images
+|--------------------------------------------------------------------------
+|
+| Jika field images dikirim,
+| seluruh gambar lama akan diganti.
+|
+*/
 
-                'nullable',
-
-                'string',
-
-                Rule::in([
-
-                    ProductReview::STATUS_PENDING,
-
-                    ProductReview::STATUS_APPROVED,
-
-                    ProductReview::STATUS_REJECTED,
-                ]),
+            'images' => [
+                'sometimes',
+                'array',
+                'max:5',
             ],
 
-            'moderation_notes' => [
-
-                'nullable',
-
-                'string',
+            'images.*' => [
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
             ],
         ];
     }
@@ -127,6 +126,21 @@ class UpdateProductReviewRequest extends FormRequest
 
             'status.in' =>
                 'Status review tidak valid.',
+
+            'images.array' =>
+                'Format gambar review tidak valid.',
+
+            'images.max' =>
+                'Maksimal 5 gambar review.',
+
+            'images.*.image' =>
+                'File harus berupa gambar.',
+
+            'images.*.mimes' =>
+                'Format gambar harus JPG, JPEG, PNG, atau WEBP.',
+
+            'images.*.max' =>
+                'Ukuran gambar maksimal 2 MB.',
         ];
     }
 
@@ -187,58 +201,6 @@ class UpdateProductReviewRequest extends FormRequest
                         ->add(
                             'review',
                             'Judul atau isi review wajib diisi.'
-                        );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Moderation notes wajib saat reject
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-
-                    $this->status ===
-                    ProductReview::STATUS_REJECTED
-
-                    &&
-
-                    blank(
-                        $this->moderation_notes
-                    )
-                ) {
-
-                    $validator
-                        ->errors()
-                        ->add(
-                            'moderation_notes',
-                            'Catatan moderasi wajib diisi saat review ditolak.'
-                        );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Moderation notes tidak boleh diisi selain rejected
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-
-                    filled(
-                        $this->moderation_notes
-                    )
-
-                    &&
-
-                    $this->status !==
-                    ProductReview::STATUS_REJECTED
-                ) {
-
-                    $validator
-                        ->errors()
-                        ->add(
-                            'moderation_notes',
-                            'Catatan moderasi hanya boleh diisi untuk review yang ditolak.'
                         );
                 }
             }

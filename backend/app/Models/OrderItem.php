@@ -12,6 +12,74 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int $product_sku_id
+ * @property int $product_id
+ * @property int|null $category_id
+ * @property string $product_name
+ * @property string|null $product_slug
+ * @property string $sku
+ * @property string|null $barcode
+ * @property string|null $variant_name
+ * @property string|null $thumbnail
+ * @property int $weight
+ * @property numeric $unit_price
+ * @property numeric $discount_amount
+ * @property numeric $final_price
+ * @property int $quantity
+ * @property numeric $subtotal
+ * @property string|null $promotion_name
+ * @property string|null $promotion_code
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read string $formatted_discount
+ * @property-read string $formatted_final_price
+ * @property-read string $formatted_subtotal
+ * @property-read string $formatted_unit_price
+ * @property-read string|null $thumbnail_url
+ * @property-read float $total_discount
+ * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\ProductSku|null $productSku
+ * @method static Builder<static>|OrderItem bestSeller()
+ * @method static Builder<static>|OrderItem byCategory(?int $categoryId)
+ * @method static Builder<static>|OrderItem byOrder(?int $orderId)
+ * @method static Builder<static>|OrderItem byProduct(?int $productId)
+ * @method static Builder<static>|OrderItem bySku(?string $sku)
+ * @method static \Database\Factories\OrderItemFactory factory($count = null, $state = [])
+ * @method static Builder<static>|OrderItem latestFirst()
+ * @method static Builder<static>|OrderItem newModelQuery()
+ * @method static Builder<static>|OrderItem newQuery()
+ * @method static Builder<static>|OrderItem query()
+ * @method static Builder<static>|OrderItem whereBarcode($value)
+ * @method static Builder<static>|OrderItem whereCategoryId($value)
+ * @method static Builder<static>|OrderItem whereCreatedAt($value)
+ * @method static Builder<static>|OrderItem whereDiscountAmount($value)
+ * @method static Builder<static>|OrderItem whereFinalPrice($value)
+ * @method static Builder<static>|OrderItem whereId($value)
+ * @method static Builder<static>|OrderItem whereMetadata($value)
+ * @method static Builder<static>|OrderItem whereOrderId($value)
+ * @method static Builder<static>|OrderItem whereProductId($value)
+ * @method static Builder<static>|OrderItem whereProductName($value)
+ * @method static Builder<static>|OrderItem whereProductSkuId($value)
+ * @method static Builder<static>|OrderItem whereProductSlug($value)
+ * @method static Builder<static>|OrderItem wherePromotionCode($value)
+ * @method static Builder<static>|OrderItem wherePromotionName($value)
+ * @method static Builder<static>|OrderItem whereQuantity($value)
+ * @method static Builder<static>|OrderItem whereSku($value)
+ * @method static Builder<static>|OrderItem whereSubtotal($value)
+ * @method static Builder<static>|OrderItem whereThumbnail($value)
+ * @method static Builder<static>|OrderItem whereUnitPrice($value)
+ * @method static Builder<static>|OrderItem whereUpdatedAt($value)
+ * @method static Builder<static>|OrderItem whereVariantName($value)
+ * @method static Builder<static>|OrderItem whereWeight($value)
+ * @mixin \Eloquent
+ */
 class OrderItem extends Model
 {
     use HasFactory;

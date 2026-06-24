@@ -19,6 +19,64 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * Customer Address Book
  *
  * Enterprise Ready
+ *
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property string $label
+ * @property string $recipient_name
+ * @property string $recipient_phone
+ * @property string $address
+ * @property string $province
+ * @property string $city
+ * @property string $district
+ * @property string $subdistrict
+ * @property string $postal_code
+ * @property numeric|null $latitude
+ * @property numeric|null $longitude
+ * @property bool $is_default
+ * @property bool $is_active
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customer
+ * @method static Builder<static>|CustomerAddress active()
+ * @method static Builder<static>|CustomerAddress byCity(?string $city)
+ * @method static Builder<static>|CustomerAddress byCustomer(?int $customerId)
+ * @method static Builder<static>|CustomerAddress byPostalCode(?string $postalCode)
+ * @method static Builder<static>|CustomerAddress byProvince(?string $province)
+ * @method static Builder<static>|CustomerAddress default()
+ * @method static \Database\Factories\CustomerAddressFactory factory($count = null, $state = [])
+ * @method static Builder<static>|CustomerAddress inactive()
+ * @method static Builder<static>|CustomerAddress newModelQuery()
+ * @method static Builder<static>|CustomerAddress newQuery()
+ * @method static Builder<static>|CustomerAddress onlyTrashed()
+ * @method static Builder<static>|CustomerAddress query()
+ * @method static Builder<static>|CustomerAddress search(?string $keyword)
+ * @method static Builder<static>|CustomerAddress whereAddress($value)
+ * @method static Builder<static>|CustomerAddress whereCity($value)
+ * @method static Builder<static>|CustomerAddress whereCreatedAt($value)
+ * @method static Builder<static>|CustomerAddress whereCustomerProfileId($value)
+ * @method static Builder<static>|CustomerAddress whereDeletedAt($value)
+ * @method static Builder<static>|CustomerAddress whereDistrict($value)
+ * @method static Builder<static>|CustomerAddress whereId($value)
+ * @method static Builder<static>|CustomerAddress whereIsActive($value)
+ * @method static Builder<static>|CustomerAddress whereIsDefault($value)
+ * @method static Builder<static>|CustomerAddress whereLabel($value)
+ * @method static Builder<static>|CustomerAddress whereLatitude($value)
+ * @method static Builder<static>|CustomerAddress whereLongitude($value)
+ * @method static Builder<static>|CustomerAddress whereNotes($value)
+ * @method static Builder<static>|CustomerAddress wherePostalCode($value)
+ * @method static Builder<static>|CustomerAddress whereProvince($value)
+ * @method static Builder<static>|CustomerAddress whereRecipientName($value)
+ * @method static Builder<static>|CustomerAddress whereRecipientPhone($value)
+ * @method static Builder<static>|CustomerAddress whereSubdistrict($value)
+ * @method static Builder<static>|CustomerAddress whereUpdatedAt($value)
+ * @method static Builder<static>|CustomerAddress withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|CustomerAddress withoutTrashed()
+ * @mixin \Eloquent
  */
 class CustomerAddress extends Model
 {

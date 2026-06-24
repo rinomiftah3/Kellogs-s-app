@@ -22,6 +22,86 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * Customer Domain Root
  *
  * Enterprise Ready
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $customer_code
+ * @property string $full_name
+ * @property string|null $phone
+ * @property string|null $gender
+ * @property \Illuminate\Support\Carbon|null $birth_date
+ * @property string|null $avatar
+ * @property string|null $bio
+ * @property string $membership_level
+ * @property int $total_points
+ * @property numeric $total_spent
+ * @property int $total_orders
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $last_order_at
+ * @property bool $email_subscribed
+ * @property bool $sms_subscribed
+ * @property bool $push_subscribed
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CustomerAddress> $addresses
+ * @property-read int|null $addresses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CustomerDevice> $devices
+ * @property-read int|null $devices_count
+ * @property-read \App\Models\LoyaltyPoint|null $loyaltyPoint
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CustomerNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PointTransaction> $pointTransactions
+ * @property-read int|null $point_transactions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductReview> $reviews
+ * @property-read int|null $reviews_count
+ * @property-read \App\Models\User|null $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Wishlist> $wishlists
+ * @property-read int|null $wishlists_count
+ * @method static Builder<static>|CustomerProfile active()
+ * @method static Builder<static>|CustomerProfile emailSubscribed()
+ * @method static \Database\Factories\CustomerProfileFactory factory($count = null, $state = [])
+ * @method static Builder<static>|CustomerProfile gold()
+ * @method static Builder<static>|CustomerProfile hasOrders()
+ * @method static Builder<static>|CustomerProfile inactive()
+ * @method static Builder<static>|CustomerProfile latestOrder()
+ * @method static Builder<static>|CustomerProfile membership(string $level)
+ * @method static Builder<static>|CustomerProfile newModelQuery()
+ * @method static Builder<static>|CustomerProfile newQuery()
+ * @method static Builder<static>|CustomerProfile onlyTrashed()
+ * @method static Builder<static>|CustomerProfile platinum()
+ * @method static Builder<static>|CustomerProfile pushSubscribed()
+ * @method static Builder<static>|CustomerProfile query()
+ * @method static Builder<static>|CustomerProfile regular()
+ * @method static Builder<static>|CustomerProfile search(?string $keyword)
+ * @method static Builder<static>|CustomerProfile silver()
+ * @method static Builder<static>|CustomerProfile smsSubscribed()
+ * @method static Builder<static>|CustomerProfile whereAvatar($value)
+ * @method static Builder<static>|CustomerProfile whereBio($value)
+ * @method static Builder<static>|CustomerProfile whereBirthDate($value)
+ * @method static Builder<static>|CustomerProfile whereCreatedAt($value)
+ * @method static Builder<static>|CustomerProfile whereCustomerCode($value)
+ * @method static Builder<static>|CustomerProfile whereDeletedAt($value)
+ * @method static Builder<static>|CustomerProfile whereEmailSubscribed($value)
+ * @method static Builder<static>|CustomerProfile whereFullName($value)
+ * @method static Builder<static>|CustomerProfile whereGender($value)
+ * @method static Builder<static>|CustomerProfile whereId($value)
+ * @method static Builder<static>|CustomerProfile whereIsActive($value)
+ * @method static Builder<static>|CustomerProfile whereLastOrderAt($value)
+ * @method static Builder<static>|CustomerProfile whereMembershipLevel($value)
+ * @method static Builder<static>|CustomerProfile wherePhone($value)
+ * @method static Builder<static>|CustomerProfile wherePushSubscribed($value)
+ * @method static Builder<static>|CustomerProfile whereSmsSubscribed($value)
+ * @method static Builder<static>|CustomerProfile whereTotalOrders($value)
+ * @method static Builder<static>|CustomerProfile whereTotalPoints($value)
+ * @method static Builder<static>|CustomerProfile whereTotalSpent($value)
+ * @method static Builder<static>|CustomerProfile whereUpdatedAt($value)
+ * @method static Builder<static>|CustomerProfile whereUserId($value)
+ * @method static Builder<static>|CustomerProfile withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|CustomerProfile withoutTrashed()
+ * @mixin \Eloquent
  */
 class CustomerProfile extends Model
 {

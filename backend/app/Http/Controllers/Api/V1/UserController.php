@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+
+use App\Http\Resources\V1\UserResource;
+
+use App\Models\User;
 
 use App\Services\UserService;
 
 use App\Traits\ApiResponse;
 
-use App\Http\Controllers\Controller;
-
-use App\Http\Resources\V1\UserResource;
-
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -27,62 +27,71 @@ class UserController extends Controller
     }
 
     /**
-     * User list.
+     * Display a listing of users.
      */
     public function index(
         Request $request
     ) {
-
         $users = $this->userService->paginate(
             filters: $request->only([
                 'search',
             ]),
             perPage: min(
-                (int) $request->get(
+                $request->integer(
                     'per_page',
-                    10
+                    (int) env(
+                        'DEFAULT_PER_PAGE',
+                        15
+                    )
                 ),
-                100
+                (int) env(
+                    'MAX_PER_PAGE',
+                    100
+                )
             )
         );
 
-        return $this->successResponse(
-            UserResource::collection(
-                $users
-            ),
+        $users->setCollection(
+            $users->getCollection()
+                ->map(
+                    fn (User $user) => new UserResource(
+                        $user
+                    )
+                )
+        );
+
+        return $this->paginatedResponse(
+            $users,
             'Data user berhasil diambil'
         );
     }
 
     /**
-     * Create user.
+     * Store a newly created user.
      */
     public function store(
         StoreUserRequest $request
     ) {
-
         $user = $this->userService->create(
             data: $request->validated(),
             actor: $request->user(),
             request: $request
         );
 
-        return $this->successResponse(
+        return $this->createdResponse(
             new UserResource(
                 $user
             ),
-            'User berhasil dibuat',
-            201
+            'User berhasil dibuat'
         );
     }
 
     /**
-     * User detail.
+     * Display the specified user.
      */
     public function show(
         User $user
     ) {
-
         return $this->successResponse(
             new UserResource(
                 $this->userService->find(
@@ -94,13 +103,12 @@ class UserController extends Controller
     }
 
     /**
-     * Update user.
+     * Update the specified user.
      */
     public function update(
         UpdateUserRequest $request,
         User $user
     ) {
-
         $updatedUser =
             $this->userService->update(
                 user: $user,
@@ -118,21 +126,19 @@ class UserController extends Controller
     }
 
     /**
-     * Delete user.
+     * Remove the specified user.
      */
     public function destroy(
         User $user,
         Request $request
     ) {
-
         $this->userService->delete(
             user: $user,
             actor: $request->user(),
             request: $request
         );
 
-        return $this->successResponse(
-            null,
+        return $this->deletedResponse(
             'User berhasil dihapus'
         );
     }

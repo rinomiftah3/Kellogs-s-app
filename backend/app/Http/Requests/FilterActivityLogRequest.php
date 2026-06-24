@@ -28,10 +28,12 @@ class FilterActivityLogRequest extends FormRequest
     */
 
     public function authorize(): bool
-    {
-        return $this->user()?->can('view activity logs')
-            ?? false;
-    }
+{
+    return $this->user()?->canAny([
+        'activity_logs.view',
+        'activity-logs.view',
+    ]) ?? false;
+}
 
     /*
     |--------------------------------------------------------------------------

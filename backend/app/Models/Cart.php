@@ -21,6 +21,49 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property int $total_items
+ * @property numeric $subtotal
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $last_activity_at
+ * @property \Illuminate\Support\Carbon|null $expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customerProfile
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CartItem> $items
+ * @property-read int|null $items_count
+ * @method static Builder<static>|Cart abandoned(int $minutes = 60)
+ * @method static Builder<static>|Cart active()
+ * @method static Builder<static>|Cart byCustomer(?int $customerProfileId)
+ * @method static Builder<static>|Cart empty()
+ * @method static Builder<static>|Cart expired()
+ * @method static \Database\Factories\CartFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Cart inactive()
+ * @method static Builder<static>|Cart latestActivity()
+ * @method static Builder<static>|Cart newModelQuery()
+ * @method static Builder<static>|Cart newQuery()
+ * @method static Builder<static>|Cart notEmpty()
+ * @method static Builder<static>|Cart notExpired()
+ * @method static Builder<static>|Cart onlyTrashed()
+ * @method static Builder<static>|Cart query()
+ * @method static Builder<static>|Cart whereCreatedAt($value)
+ * @method static Builder<static>|Cart whereCustomerProfileId($value)
+ * @method static Builder<static>|Cart whereDeletedAt($value)
+ * @method static Builder<static>|Cart whereExpiresAt($value)
+ * @method static Builder<static>|Cart whereId($value)
+ * @method static Builder<static>|Cart whereIsActive($value)
+ * @method static Builder<static>|Cart whereLastActivityAt($value)
+ * @method static Builder<static>|Cart whereSubtotal($value)
+ * @method static Builder<static>|Cart whereTotalItems($value)
+ * @method static Builder<static>|Cart whereUpdatedAt($value)
+ * @method static Builder<static>|Cart withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Cart withoutTrashed()
+ * @mixin \Eloquent
  */
 class Cart extends Model
 {

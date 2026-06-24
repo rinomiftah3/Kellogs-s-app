@@ -14,7 +14,7 @@ class ActivityLogApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const API_PREFIX =
+    protected const API_PREFIX =
         '/api/v1/activity-logs';
 
     public function test_super_admin_can_view_activity_logs(): void

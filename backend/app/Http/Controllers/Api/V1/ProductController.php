@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Product;
+use App\Http\Controllers\Controller;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\FilterProductRequest;
+
+use App\Http\Resources\V1\ProductResource;
+
+use App\Models\Product;
 
 use App\Services\ProductService;
 
 use App\Traits\ApiResponse;
 
-use App\Http\Controllers\Controller;
-
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-
-use App\Http\Resources\V1\ProductResource;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -23,59 +24,52 @@ class ProductController extends Controller
 
     public function __construct(
         private readonly ProductService $productService
-    ) {}
+    ) {
+    }
 
     /**
-     * Product list.
+     * Display listing.
      */
     public function index(
-        Request $request
+        FilterProductRequest $request
     ) {
 
-        $products =
-            $this->productService->paginate(
-                filters: [
-                    'search' =>
-                        $request->search,
-
-                    'category_id' =>
-                        $request->category_id,
-
-                    'is_active' =>
-                        $request->has('is_active')
-                            ? $request->boolean('is_active')
-                            : null,
-                ],
-                perPage: min(
-                    (int) $request->get(
-                        'per_page',
-                        10
-                    ),
-                    100
-                )
-            );
+        $products = $this->productService
+        ->paginate(
+            filters: $request->filters(),
+            perPage: $request->perPage()
+        );
 
         return $this->successResponse(
             ProductResource::collection(
                 $products
             ),
-            'Daftar produk berhasil diambil'
+            'Data produk berhasil diambil'
         );
     }
 
     /**
-     * Create product.
+     * Store product.
      */
     public function store(
         StoreProductRequest $request
     ) {
 
-        $product =
-            $this->productService->create(
-                data: $request->validated(),
-                image: $request->file('image'),
-                actor: $request->user(),
-                request: $request
+        $product = $this->productService
+            ->create(
+                data:
+                    $request->validated(),
+
+                thumbnail:
+                    $request->file(
+                        'thumbnail'
+                    ),
+
+                actor:
+                    $request->user(),
+
+                request:
+                    $request
             );
 
         return $this->successResponse(
@@ -88,20 +82,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Product detail.
+     * Show product.
      */
     public function show(
         Product $product
     ) {
 
-        $product =
-            $this->productService->find(
-                $product
-            );
-
         return $this->successResponse(
             new ProductResource(
-                $product
+                $this->productService
+                    ->find(
+                        $product
+                    )
             ),
             'Detail produk berhasil diambil'
         );
@@ -115,13 +107,24 @@ class ProductController extends Controller
         Product $product
     ) {
 
-        $product =
-            $this->productService->update(
-                product: $product,
-                data: $request->validated(),
-                image: $request->file('image'),
-                actor: $request->user(),
-                request: $request
+        $product = $this->productService
+            ->update(
+                product:
+                    $product,
+
+                data:
+                    $request->validated(),
+
+                thumbnail:
+                    $request->file(
+                        'thumbnail'
+                    ),
+
+                actor:
+                    $request->user(),
+
+                request:
+                    $request
             );
 
         return $this->successResponse(
@@ -140,11 +143,17 @@ class ProductController extends Controller
         Request $request
     ) {
 
-        $this->productService->delete(
-            product: $product,
-            actor: $request->user(),
-            request: $request
-        );
+        $this->productService
+            ->delete(
+                product:
+                    $product,
+
+                actor:
+                    $request->user(),
+
+                request:
+                    $request
+            );
 
         return $this->successResponse(
             null,

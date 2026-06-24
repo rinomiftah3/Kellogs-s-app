@@ -20,6 +20,55 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Product Category Management
  * Enterprise Ready
+ *
+ * @property int $id
+ * @property int|null $parent_id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $description
+ * @property string|null $image
+ * @property int $sort_order
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $children
+ * @property-read int $children_count
+ * @property-read string|null $image_url
+ * @property-read int|null $products_count
+ * @property-read Category|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
+ * @method static Builder<static>|Category active()
+ * @method static Builder<static>|Category childCategories()
+ * @method static Builder<static>|Category empty()
+ * @method static \Database\Factories\CategoryFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Category hasProducts()
+ * @method static Builder<static>|Category inactive()
+ * @method static Builder<static>|Category latest()
+ * @method static Builder<static>|Category newModelQuery()
+ * @method static Builder<static>|Category newQuery()
+ * @method static Builder<static>|Category oldest()
+ * @method static Builder<static>|Category onlyTrashed()
+ * @method static Builder<static>|Category ordered()
+ * @method static Builder<static>|Category parentCategories()
+ * @method static Builder<static>|Category query()
+ * @method static Builder<static>|Category search(?string $keyword)
+ * @method static Builder<static>|Category whereCreatedAt($value)
+ * @method static Builder<static>|Category whereDeletedAt($value)
+ * @method static Builder<static>|Category whereDescription($value)
+ * @method static Builder<static>|Category whereId($value)
+ * @method static Builder<static>|Category whereImage($value)
+ * @method static Builder<static>|Category whereIsActive($value)
+ * @method static Builder<static>|Category whereName($value)
+ * @method static Builder<static>|Category whereParentId($value)
+ * @method static Builder<static>|Category whereSlug($value)
+ * @method static Builder<static>|Category whereSortOrder($value)
+ * @method static Builder<static>|Category whereUpdatedAt($value)
+ * @method static Builder<static>|Category withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Category withoutTrashed()
+ * @mixin \Eloquent
  */
 class Category extends Model
 {

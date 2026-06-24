@@ -10,6 +10,7 @@ use App\Services\AuthService;
 
 use App\Traits\ApiResponse;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -26,7 +27,7 @@ class AuthController extends Controller
      */
     public function login(
         LoginRequest $request
-    ) {
+    ): JsonResponse {
 
         $result = $this->authService
             ->login(
@@ -46,7 +47,7 @@ class AuthController extends Controller
      */
     public function me(
         Request $request
-    ) {
+    ): JsonResponse {
 
         $user = $this->authService
             ->me(
@@ -64,7 +65,7 @@ class AuthController extends Controller
      */
     public function logout(
         Request $request
-    ) {
+    ): JsonResponse {
 
         $this->authService
             ->logout(
@@ -84,7 +85,7 @@ class AuthController extends Controller
      */
     public function logoutAll(
         Request $request
-    ) {
+    ): JsonResponse {
 
         $this->authService
             ->logoutAll(

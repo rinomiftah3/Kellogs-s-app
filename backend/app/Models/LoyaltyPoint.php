@@ -14,6 +14,85 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property int $current_points
+ * @property int $available_points
+ * @property int $pending_points
+ * @property int $earned_points
+ * @property int $redeemed_points
+ * @property int $expired_points
+ * @property int $lifetime_points
+ * @property int $lifetime_orders
+ * @property numeric $lifetime_spending
+ * @property string $tier
+ * @property \Illuminate\Support\Carbon|null $tier_upgraded_at
+ * @property \Illuminate\Support\Carbon|null $tier_expires_at
+ * @property \Illuminate\Support\Carbon|null $last_earned_at
+ * @property \Illuminate\Support\Carbon|null $last_redeemed_at
+ * @property \Illuminate\Support\Carbon|null $last_activity_at
+ * @property \Illuminate\Support\Carbon|null $last_expired_at
+ * @property int $total_expiration_events
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customerProfile
+ * @property-read bool $is_expired
+ * @property-read int $net_points
+ * @property-read string $tier_badge
+ * @property-read string $tier_label
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PointTransaction> $transactions
+ * @property-read int|null $transactions_count
+ * @method static Builder<static>|LoyaltyPoint active()
+ * @method static Builder<static>|LoyaltyPoint bronze()
+ * @method static Builder<static>|LoyaltyPoint byCustomer(?int $customerProfileId)
+ * @method static Builder<static>|LoyaltyPoint expiredTier()
+ * @method static \Database\Factories\LoyaltyPointFactory factory($count = null, $state = [])
+ * @method static Builder<static>|LoyaltyPoint gold()
+ * @method static Builder<static>|LoyaltyPoint highestPoints()
+ * @method static Builder<static>|LoyaltyPoint newModelQuery()
+ * @method static Builder<static>|LoyaltyPoint newQuery()
+ * @method static Builder<static>|LoyaltyPoint onlyTrashed()
+ * @method static Builder<static>|LoyaltyPoint platinum()
+ * @method static Builder<static>|LoyaltyPoint published()
+ * @method static Builder<static>|LoyaltyPoint query()
+ * @method static Builder<static>|LoyaltyPoint silver()
+ * @method static Builder<static>|LoyaltyPoint tier(string $tier)
+ * @method static Builder<static>|LoyaltyPoint whereAvailablePoints($value)
+ * @method static Builder<static>|LoyaltyPoint whereCreatedAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereCurrentPoints($value)
+ * @method static Builder<static>|LoyaltyPoint whereCustomerProfileId($value)
+ * @method static Builder<static>|LoyaltyPoint whereDeletedAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereEarnedPoints($value)
+ * @method static Builder<static>|LoyaltyPoint whereExpiredPoints($value)
+ * @method static Builder<static>|LoyaltyPoint whereId($value)
+ * @method static Builder<static>|LoyaltyPoint whereIsActive($value)
+ * @method static Builder<static>|LoyaltyPoint whereLastActivityAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereLastEarnedAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereLastExpiredAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereLastRedeemedAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereLifetimeOrders($value)
+ * @method static Builder<static>|LoyaltyPoint whereLifetimePoints($value)
+ * @method static Builder<static>|LoyaltyPoint whereLifetimeSpending($value)
+ * @method static Builder<static>|LoyaltyPoint whereMetadata($value)
+ * @method static Builder<static>|LoyaltyPoint wherePendingPoints($value)
+ * @method static Builder<static>|LoyaltyPoint wherePublishedAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereRedeemedPoints($value)
+ * @method static Builder<static>|LoyaltyPoint whereTier($value)
+ * @method static Builder<static>|LoyaltyPoint whereTierExpiresAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereTierUpgradedAt($value)
+ * @method static Builder<static>|LoyaltyPoint whereTotalExpirationEvents($value)
+ * @method static Builder<static>|LoyaltyPoint whereUpdatedAt($value)
+ * @method static Builder<static>|LoyaltyPoint withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|LoyaltyPoint withoutTrashed()
+ * @mixin \Eloquent
+ */
 class LoyaltyPoint extends Model
 {
     use HasFactory;

@@ -20,6 +20,70 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $checkout_session_id
+ * @property int $product_sku_id
+ * @property string $product_name
+ * @property string $sku
+ * @property string|null $thumbnail
+ * @property numeric $price
+ * @property int $quantity
+ * @property numeric $subtotal
+ * @property numeric $discount_amount
+ * @property numeric $final_price
+ * @property bool $is_available
+ * @property bool $is_valid_price
+ * @property bool $is_valid_stock
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon $added_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CheckoutSession|null $checkoutSession
+ * @property-read string $formatted_discount
+ * @property-read string $formatted_final_price
+ * @property-read string $formatted_price
+ * @property-read string $formatted_subtotal
+ * @property-read string|null $thumbnail_url
+ * @property-read \App\Models\ProductSku|null $productSku
+ * @method static Builder<static>|CheckoutItem available()
+ * @method static Builder<static>|CheckoutItem bySession(?int $sessionId)
+ * @method static \Database\Factories\CheckoutItemFactory factory($count = null, $state = [])
+ * @method static Builder<static>|CheckoutItem invalidPrice()
+ * @method static Builder<static>|CheckoutItem invalidStock()
+ * @method static Builder<static>|CheckoutItem latestFirst()
+ * @method static Builder<static>|CheckoutItem newModelQuery()
+ * @method static Builder<static>|CheckoutItem newQuery()
+ * @method static Builder<static>|CheckoutItem onlyTrashed()
+ * @method static Builder<static>|CheckoutItem query()
+ * @method static Builder<static>|CheckoutItem valid()
+ * @method static Builder<static>|CheckoutItem validPrice()
+ * @method static Builder<static>|CheckoutItem validStock()
+ * @method static Builder<static>|CheckoutItem whereAddedAt($value)
+ * @method static Builder<static>|CheckoutItem whereCheckoutSessionId($value)
+ * @method static Builder<static>|CheckoutItem whereCreatedAt($value)
+ * @method static Builder<static>|CheckoutItem whereDeletedAt($value)
+ * @method static Builder<static>|CheckoutItem whereDiscountAmount($value)
+ * @method static Builder<static>|CheckoutItem whereFinalPrice($value)
+ * @method static Builder<static>|CheckoutItem whereId($value)
+ * @method static Builder<static>|CheckoutItem whereIsAvailable($value)
+ * @method static Builder<static>|CheckoutItem whereIsValidPrice($value)
+ * @method static Builder<static>|CheckoutItem whereIsValidStock($value)
+ * @method static Builder<static>|CheckoutItem whereNotes($value)
+ * @method static Builder<static>|CheckoutItem wherePrice($value)
+ * @method static Builder<static>|CheckoutItem whereProductName($value)
+ * @method static Builder<static>|CheckoutItem whereProductSkuId($value)
+ * @method static Builder<static>|CheckoutItem whereQuantity($value)
+ * @method static Builder<static>|CheckoutItem whereSku($value)
+ * @method static Builder<static>|CheckoutItem whereSubtotal($value)
+ * @method static Builder<static>|CheckoutItem whereThumbnail($value)
+ * @method static Builder<static>|CheckoutItem whereUpdatedAt($value)
+ * @method static Builder<static>|CheckoutItem withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|CheckoutItem withoutTrashed()
+ * @mixin \Eloquent
  */
 class CheckoutItem extends Model
 {

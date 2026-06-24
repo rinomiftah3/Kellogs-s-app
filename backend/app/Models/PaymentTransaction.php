@@ -11,6 +11,68 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $payment_id
+ * @property string $transaction_id
+ * @property string|null $gateway_transaction_id
+ * @property string|null $gateway_order_id
+ * @property string $gateway
+ * @property string $method
+ * @property string $type
+ * @property numeric $amount
+ * @property numeric $fee_amount
+ * @property numeric $net_amount
+ * @property string $status
+ * @property string|null $reference_number
+ * @property array<array-key, mixed>|null $request_payload
+ * @property array<array-key, mixed>|null $response_payload
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $processed_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read bool $is_successful
+ * @property-read float $profit_loss_amount
+ * @property-read \App\Models\Payment|null $payment
+ * @method static Builder<static>|PaymentTransaction cancelled()
+ * @method static Builder<static>|PaymentTransaction expired()
+ * @method static Builder<static>|PaymentTransaction failed()
+ * @method static Builder<static>|PaymentTransaction gateway(?string $gateway)
+ * @method static Builder<static>|PaymentTransaction latestProcessed()
+ * @method static Builder<static>|PaymentTransaction newModelQuery()
+ * @method static Builder<static>|PaymentTransaction newQuery()
+ * @method static Builder<static>|PaymentTransaction pending()
+ * @method static Builder<static>|PaymentTransaction query()
+ * @method static Builder<static>|PaymentTransaction refund()
+ * @method static Builder<static>|PaymentTransaction search(?string $keyword)
+ * @method static Builder<static>|PaymentTransaction status(?string $status)
+ * @method static Builder<static>|PaymentTransaction successful()
+ * @method static Builder<static>|PaymentTransaction type(?string $type)
+ * @method static Builder<static>|PaymentTransaction whereAmount($value)
+ * @method static Builder<static>|PaymentTransaction whereCreatedAt($value)
+ * @method static Builder<static>|PaymentTransaction whereFeeAmount($value)
+ * @method static Builder<static>|PaymentTransaction whereGateway($value)
+ * @method static Builder<static>|PaymentTransaction whereGatewayOrderId($value)
+ * @method static Builder<static>|PaymentTransaction whereGatewayTransactionId($value)
+ * @method static Builder<static>|PaymentTransaction whereId($value)
+ * @method static Builder<static>|PaymentTransaction whereMetadata($value)
+ * @method static Builder<static>|PaymentTransaction whereMethod($value)
+ * @method static Builder<static>|PaymentTransaction whereNetAmount($value)
+ * @method static Builder<static>|PaymentTransaction whereNotes($value)
+ * @method static Builder<static>|PaymentTransaction wherePaymentId($value)
+ * @method static Builder<static>|PaymentTransaction whereProcessedAt($value)
+ * @method static Builder<static>|PaymentTransaction whereReferenceNumber($value)
+ * @method static Builder<static>|PaymentTransaction whereRequestPayload($value)
+ * @method static Builder<static>|PaymentTransaction whereResponsePayload($value)
+ * @method static Builder<static>|PaymentTransaction whereStatus($value)
+ * @method static Builder<static>|PaymentTransaction whereTransactionId($value)
+ * @method static Builder<static>|PaymentTransaction whereType($value)
+ * @method static Builder<static>|PaymentTransaction whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class PaymentTransaction extends Model
 {
     use HasFactory;

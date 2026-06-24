@@ -16,6 +16,124 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+/**
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property int $shipping_address_id
+ * @property string $order_number
+ * @property string $status
+ * @property string $payment_status
+ * @property string $fulfillment_status
+ * @property string $customer_name
+ * @property string $customer_email
+ * @property string $customer_phone
+ * @property string $recipient_name
+ * @property string $recipient_phone
+ * @property string $shipping_address
+ * @property string $province
+ * @property string $city
+ * @property string|null $district
+ * @property string $postal_code
+ * @property numeric $subtotal
+ * @property numeric $shipping_cost
+ * @property numeric $discount_amount
+ * @property numeric $tax_amount
+ * @property numeric $grand_total
+ * @property string|null $voucher_code
+ * @property numeric $voucher_discount
+ * @property string|null $courier_code
+ * @property string|null $courier_service
+ * @property string|null $tracking_number
+ * @property int $total_weight
+ * @property string|null $customer_notes
+ * @property string|null $admin_notes
+ * @property \Illuminate\Support\Carbon $ordered_at
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property \Illuminate\Support\Carbon|null $shipped_at
+ * @property \Illuminate\Support\Carbon|null $completed_at
+ * @property \Illuminate\Support\Carbon|null $cancelled_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customerProfile
+ * @property-read string $formatted_total
+ * @property-read int $item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderHistory> $histories
+ * @property-read int|null $histories_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $items
+ * @property-read int|null $items_count
+ * @property-read \App\Models\Payment|null $payment
+ * @property-read \App\Models\Shipment|null $shipment
+ * @property-read \App\Models\CustomerAddress|null $shippingAddress
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderStatusLog> $statusLogs
+ * @property-read int|null $status_logs_count
+ * @property-read \App\Models\VoucherUsage|null $voucherUsage
+ * @method static Builder<static>|Order cancelled()
+ * @method static Builder<static>|Order completed()
+ * @method static Builder<static>|Order confirmed()
+ * @method static Builder<static>|Order delivered()
+ * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Order latestFirst()
+ * @method static Builder<static>|Order newModelQuery()
+ * @method static Builder<static>|Order newQuery()
+ * @method static Builder<static>|Order onlyTrashed()
+ * @method static Builder<static>|Order packed()
+ * @method static Builder<static>|Order paymentFailed()
+ * @method static Builder<static>|Order paymentPaid()
+ * @method static Builder<static>|Order paymentPending()
+ * @method static Builder<static>|Order paymentRefunded()
+ * @method static Builder<static>|Order pending()
+ * @method static Builder<static>|Order processing()
+ * @method static Builder<static>|Order query()
+ * @method static Builder<static>|Order search(?string $keyword)
+ * @method static Builder<static>|Order shipped()
+ * @method static Builder<static>|Order status(string $status)
+ * @method static Builder<static>|Order whereAdminNotes($value)
+ * @method static Builder<static>|Order whereCancelledAt($value)
+ * @method static Builder<static>|Order whereCity($value)
+ * @method static Builder<static>|Order whereCompletedAt($value)
+ * @method static Builder<static>|Order whereCourierCode($value)
+ * @method static Builder<static>|Order whereCourierService($value)
+ * @method static Builder<static>|Order whereCreatedAt($value)
+ * @method static Builder<static>|Order whereCustomerEmail($value)
+ * @method static Builder<static>|Order whereCustomerName($value)
+ * @method static Builder<static>|Order whereCustomerNotes($value)
+ * @method static Builder<static>|Order whereCustomerPhone($value)
+ * @method static Builder<static>|Order whereCustomerProfileId($value)
+ * @method static Builder<static>|Order whereDeletedAt($value)
+ * @method static Builder<static>|Order whereDiscountAmount($value)
+ * @method static Builder<static>|Order whereDistrict($value)
+ * @method static Builder<static>|Order whereFulfillmentStatus($value)
+ * @method static Builder<static>|Order whereGrandTotal($value)
+ * @method static Builder<static>|Order whereId($value)
+ * @method static Builder<static>|Order whereMetadata($value)
+ * @method static Builder<static>|Order whereOrderNumber($value)
+ * @method static Builder<static>|Order whereOrderedAt($value)
+ * @method static Builder<static>|Order wherePaidAt($value)
+ * @method static Builder<static>|Order wherePaymentStatus($value)
+ * @method static Builder<static>|Order wherePostalCode($value)
+ * @method static Builder<static>|Order whereProvince($value)
+ * @method static Builder<static>|Order whereRecipientName($value)
+ * @method static Builder<static>|Order whereRecipientPhone($value)
+ * @method static Builder<static>|Order whereShippedAt($value)
+ * @method static Builder<static>|Order whereShippingAddress($value)
+ * @method static Builder<static>|Order whereShippingAddressId($value)
+ * @method static Builder<static>|Order whereShippingCost($value)
+ * @method static Builder<static>|Order whereStatus($value)
+ * @method static Builder<static>|Order whereSubtotal($value)
+ * @method static Builder<static>|Order whereTaxAmount($value)
+ * @method static Builder<static>|Order whereTotalWeight($value)
+ * @method static Builder<static>|Order whereTrackingNumber($value)
+ * @method static Builder<static>|Order whereUpdatedAt($value)
+ * @method static Builder<static>|Order whereVoucherCode($value)
+ * @method static Builder<static>|Order whereVoucherDiscount($value)
+ * @method static Builder<static>|Order withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Order withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Order extends Model
 {
     use HasFactory;
@@ -560,7 +678,9 @@ class Order extends Model
     {
         $this->update([
             'payment_status' => self::PAYMENT_PAID,
-            'status' => self::STATUS_CONFIRMED,
+            'status' => $this->status === self::STATUS_PENDING
+                ? self::STATUS_CONFIRMED
+                : $this->status,
             'paid_at' => now(),
         ]);
     }

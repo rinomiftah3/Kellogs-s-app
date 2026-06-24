@@ -12,6 +12,55 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int|null $user_id
+ * @property string|null $from_status
+ * @property string $to_status
+ * @property \Illuminate\Support\Carbon $changed_at
+ * @property int|null $duration_seconds
+ * @property string $source
+ * @property string|null $reason
+ * @property string|null $notes
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read float|null $duration_hours
+ * @property-read string|null $duration_human
+ * @property-read float|null $duration_minutes
+ * @property-read string $transition
+ * @property-read \App\Models\Order|null $order
+ * @property-read \App\Models\User|null $user
+ * @method static Builder<static>|OrderStatusLog admin()
+ * @method static Builder<static>|OrderStatusLog byOrder(?int $orderId)
+ * @method static Builder<static>|OrderStatusLog bySource(?string $source)
+ * @method static Builder<static>|OrderStatusLog byStatus(?string $status)
+ * @method static Builder<static>|OrderStatusLog courier()
+ * @method static Builder<static>|OrderStatusLog customer()
+ * @method static Builder<static>|OrderStatusLog latestFirst()
+ * @method static Builder<static>|OrderStatusLog newModelQuery()
+ * @method static Builder<static>|OrderStatusLog newQuery()
+ * @method static Builder<static>|OrderStatusLog paymentGateway()
+ * @method static Builder<static>|OrderStatusLog query()
+ * @method static Builder<static>|OrderStatusLog system()
+ * @method static Builder<static>|OrderStatusLog whereChangedAt($value)
+ * @method static Builder<static>|OrderStatusLog whereCreatedAt($value)
+ * @method static Builder<static>|OrderStatusLog whereDurationSeconds($value)
+ * @method static Builder<static>|OrderStatusLog whereFromStatus($value)
+ * @method static Builder<static>|OrderStatusLog whereId($value)
+ * @method static Builder<static>|OrderStatusLog whereMetadata($value)
+ * @method static Builder<static>|OrderStatusLog whereNotes($value)
+ * @method static Builder<static>|OrderStatusLog whereOrderId($value)
+ * @method static Builder<static>|OrderStatusLog whereReason($value)
+ * @method static Builder<static>|OrderStatusLog whereSource($value)
+ * @method static Builder<static>|OrderStatusLog whereToStatus($value)
+ * @method static Builder<static>|OrderStatusLog whereUpdatedAt($value)
+ * @method static Builder<static>|OrderStatusLog whereUserId($value)
+ * @mixin \Eloquent
+ */
 class OrderStatusLog extends Model
 {
     use HasFactory;

@@ -18,6 +18,28 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * ProductSku <-> ProductOptionValue
  *
  * Enterprise SKU Architecture
+ *
+ * @property int $id
+ * @property int $product_sku_id
+ * @property int $product_option_value_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\ProductOptionValue $optionValue
+ * @property-read \App\Models\ProductSku|null $sku
+ * @method static Builder<static>|ProductSkuValue byOptionValue(?int $optionValueId)
+ * @method static Builder<static>|ProductSkuValue bySku(?int $skuId)
+ * @method static Builder<static>|ProductSkuValue latest()
+ * @method static Builder<static>|ProductSkuValue newModelQuery()
+ * @method static Builder<static>|ProductSkuValue newQuery()
+ * @method static Builder<static>|ProductSkuValue query()
+ * @method static Builder<static>|ProductSkuValue whereCreatedAt($value)
+ * @method static Builder<static>|ProductSkuValue whereId($value)
+ * @method static Builder<static>|ProductSkuValue whereProductOptionValueId($value)
+ * @method static Builder<static>|ProductSkuValue whereProductSkuId($value)
+ * @method static Builder<static>|ProductSkuValue whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class ProductSkuValue extends Model
 {

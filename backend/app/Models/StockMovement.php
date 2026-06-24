@@ -18,6 +18,52 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $product_sku_id
+ * @property string $type
+ * @property int $quantity
+ * @property int $stock_before
+ * @property int $stock_after
+ * @property string|null $reference_type
+ * @property int|null $reference_id
+ * @property string|null $reference_number
+ * @property string|null $notes
+ * @property int|null $created_by
+ * @property \Illuminate\Support\Carbon $movement_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\ProductSku|null $sku
+ * @method static Builder<static>|StockMovement byCreator(?int $userId)
+ * @method static Builder<static>|StockMovement byReference(?string $referenceType, ?int $referenceId)
+ * @method static Builder<static>|StockMovement bySku(?int $skuId)
+ * @method static Builder<static>|StockMovement byType(?string $type)
+ * @method static Builder<static>|StockMovement dateRange($startDate, $endDate)
+ * @method static Builder<static>|StockMovement latestFirst()
+ * @method static Builder<static>|StockMovement newModelQuery()
+ * @method static Builder<static>|StockMovement newQuery()
+ * @method static Builder<static>|StockMovement query()
+ * @method static Builder<static>|StockMovement stockIn()
+ * @method static Builder<static>|StockMovement stockOut()
+ * @method static Builder<static>|StockMovement today()
+ * @method static Builder<static>|StockMovement whereCreatedAt($value)
+ * @method static Builder<static>|StockMovement whereCreatedBy($value)
+ * @method static Builder<static>|StockMovement whereId($value)
+ * @method static Builder<static>|StockMovement whereMovementDate($value)
+ * @method static Builder<static>|StockMovement whereNotes($value)
+ * @method static Builder<static>|StockMovement whereProductSkuId($value)
+ * @method static Builder<static>|StockMovement whereQuantity($value)
+ * @method static Builder<static>|StockMovement whereReferenceId($value)
+ * @method static Builder<static>|StockMovement whereReferenceNumber($value)
+ * @method static Builder<static>|StockMovement whereReferenceType($value)
+ * @method static Builder<static>|StockMovement whereStockAfter($value)
+ * @method static Builder<static>|StockMovement whereStockBefore($value)
+ * @method static Builder<static>|StockMovement whereType($value)
+ * @method static Builder<static>|StockMovement whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class StockMovement extends Model
 {

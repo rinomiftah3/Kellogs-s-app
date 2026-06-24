@@ -17,6 +17,67 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * CustomerNotification Model
  *
  * Enterprise Notification Center
+ *
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property string $type
+ * @property string $title
+ * @property string $message
+ * @property bool $send_in_app
+ * @property bool $send_push
+ * @property bool $send_email
+ * @property bool $send_sms
+ * @property string|null $action_url
+ * @property string|null $action_label
+ * @property array<array-key, mixed>|null $data
+ * @property bool $is_read
+ * @property \Illuminate\Support\Carbon|null $read_at
+ * @property \Illuminate\Support\Carbon|null $sent_at
+ * @property \Illuminate\Support\Carbon|null $scheduled_at
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CustomerProfile|null $customer
+ * @method static Builder<static>|CustomerNotification byCustomer(?int $customerId)
+ * @method static Builder<static>|CustomerNotification byType(?string $type)
+ * @method static Builder<static>|CustomerNotification cancelled()
+ * @method static Builder<static>|CustomerNotification failed()
+ * @method static Builder<static>|CustomerNotification latestFirst()
+ * @method static Builder<static>|CustomerNotification newModelQuery()
+ * @method static Builder<static>|CustomerNotification newQuery()
+ * @method static Builder<static>|CustomerNotification onlyTrashed()
+ * @method static Builder<static>|CustomerNotification pending()
+ * @method static Builder<static>|CustomerNotification query()
+ * @method static Builder<static>|CustomerNotification read()
+ * @method static Builder<static>|CustomerNotification scheduled()
+ * @method static Builder<static>|CustomerNotification sent()
+ * @method static Builder<static>|CustomerNotification unread()
+ * @method static Builder<static>|CustomerNotification whereActionLabel($value)
+ * @method static Builder<static>|CustomerNotification whereActionUrl($value)
+ * @method static Builder<static>|CustomerNotification whereCreatedAt($value)
+ * @method static Builder<static>|CustomerNotification whereCustomerProfileId($value)
+ * @method static Builder<static>|CustomerNotification whereData($value)
+ * @method static Builder<static>|CustomerNotification whereDeletedAt($value)
+ * @method static Builder<static>|CustomerNotification whereId($value)
+ * @method static Builder<static>|CustomerNotification whereIsRead($value)
+ * @method static Builder<static>|CustomerNotification whereMessage($value)
+ * @method static Builder<static>|CustomerNotification whereReadAt($value)
+ * @method static Builder<static>|CustomerNotification whereScheduledAt($value)
+ * @method static Builder<static>|CustomerNotification whereSendEmail($value)
+ * @method static Builder<static>|CustomerNotification whereSendInApp($value)
+ * @method static Builder<static>|CustomerNotification whereSendPush($value)
+ * @method static Builder<static>|CustomerNotification whereSendSms($value)
+ * @method static Builder<static>|CustomerNotification whereSentAt($value)
+ * @method static Builder<static>|CustomerNotification whereStatus($value)
+ * @method static Builder<static>|CustomerNotification whereTitle($value)
+ * @method static Builder<static>|CustomerNotification whereType($value)
+ * @method static Builder<static>|CustomerNotification whereUpdatedAt($value)
+ * @method static Builder<static>|CustomerNotification withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|CustomerNotification withoutTrashed()
+ * @mixin \Eloquent
  */
 class CustomerNotification extends Model
 {

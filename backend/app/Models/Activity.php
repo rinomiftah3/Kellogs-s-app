@@ -7,6 +7,54 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Spatie\Activitylog\Models\Activity as SpatieActivity;
 
+/**
+ * @property int $id
+ * @property string|null $log_name
+ * @property string $description
+ * @property string|null $event
+ * @property string|null $subject_type
+ * @property int|null $subject_id
+ * @property string|null $causer_type
+ * @property int|null $causer_id
+ * @property \Illuminate\Support\Collection<array-key, mixed>|null $attribute_changes
+ * @property \Illuminate\Support\Collection<array-key, mixed>|null $properties
+ * @property string|null $batch_uuid
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|null $causer
+ * @property-read string|null $causer_name
+ * @property-read string|null $subject_type_name
+ * @property-read \Illuminate\Database\Eloquent\Model|null $subject
+ * @method static Builder<static>|Activity causedBy(\Illuminate\Database\Eloquent\Model $causer)
+ * @method static Builder<static>|Activity causer(int $userId)
+ * @method static Builder<static>|Activity event(string $event)
+ * @method static \Database\Factories\ActivityFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Activity forEvent(\Spatie\Activitylog\Enums\ActivityEvent|string $event)
+ * @method static Builder<static>|Activity forSubject(\Illuminate\Database\Eloquent\Model $subject)
+ * @method static Builder<static>|Activity inLog(array|string ...$logNames)
+ * @method static Builder<static>|Activity latest()
+ * @method static Builder<static>|Activity logName(string $logName)
+ * @method static Builder<static>|Activity newModelQuery()
+ * @method static Builder<static>|Activity newQuery()
+ * @method static Builder<static>|Activity query()
+ * @method static Builder<static>|Activity thisMonth()
+ * @method static Builder<static>|Activity thisWeek()
+ * @method static Builder<static>|Activity today()
+ * @method static Builder<static>|Activity whereAttributeChanges($value)
+ * @method static Builder<static>|Activity whereBatchUuid($value)
+ * @method static Builder<static>|Activity whereCauserId($value)
+ * @method static Builder<static>|Activity whereCauserType($value)
+ * @method static Builder<static>|Activity whereCreatedAt($value)
+ * @method static Builder<static>|Activity whereDescription($value)
+ * @method static Builder<static>|Activity whereEvent($value)
+ * @method static Builder<static>|Activity whereId($value)
+ * @method static Builder<static>|Activity whereLogName($value)
+ * @method static Builder<static>|Activity whereProperties($value)
+ * @method static Builder<static>|Activity whereSubjectId($value)
+ * @method static Builder<static>|Activity whereSubjectType($value)
+ * @method static Builder<static>|Activity whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Activity extends SpatieActivity
 {
     use HasFactory;

@@ -15,98 +15,207 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+use Illuminate\Validation\ValidationException;
+
 class ProductService
 {
-    /**
-     * Product pagination.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Product List
+    |--------------------------------------------------------------------------
+    */
+
     public function paginate(
         array $filters = [],
         int $perPage = 15
     ): LengthAwarePaginator {
 
-        return Product::query()
+        $query = Product::query()
 
-            ->with('category')
+        ->with([
+            'category',
+        ])
 
-            ->when(
-                filled($filters['search'] ?? null),
-                fn ($query) =>
-                    $query->where(
-                        'name',
-                        'like',
-                        '%' .
-                        $filters['search'] .
-                        '%'
-                    )
+        ->withCount([
+            'reviews',
+            'skus',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Filtering
+        |--------------------------------------------------------------------------
+        */
+
+        $query->search(
+            $filters['search'] ?? null
+        );
+
+        $query->byCategory(
+            $filters['category_id'] ?? null
+        );
+
+        if (filled($filters['status'] ?? null)) {
+
+            $query->status(
+                $filters['status']
+            );
+        }
+
+        if (
+            ! is_null(
+                $filters['is_active'] ?? null
             )
+        ) {
 
-            ->when(
-                filled($filters['category_id'] ?? null),
-                fn ($query) =>
-                    $query->where(
-                        'category_id',
-                        $filters['category_id']
-                    )
+            $filters['is_active']
+                ? $query->active()
+                : $query->inactive();
+        }
+
+        if (
+            ! is_null(
+                $filters['is_featured'] ?? null
             )
+        ) {
 
-            ->when(
-                !is_null(
-                    $filters['is_active']
-                    ?? null
+            if ($filters['is_featured']) {
+
+                $query->featured();
+
+            } else {
+
+                $query->where(
+                    'is_featured',
+                    false
+                );
+            }
+        }
+
+        if (
+            ! is_null(
+                $filters['published'] ?? null
+            )
+        ) {
+
+            if ($filters['published']) {
+
+                $query->published();
+
+            } else {
+
+                $query->whereNull(
+                    'published_at'
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Sorting
+        |--------------------------------------------------------------------------
+        */
+
+        $sort =
+            $filters['sort']
+            ?? 'latest';
+
+        $direction =
+            $filters['direction']
+            ?? 'desc';
+
+        match ($sort) {
+
+            'oldest'
+                => $query->oldest(),
+
+            'name'
+                => $query->orderBy(
+                    'name',
+                    $direction
                 ),
-                fn ($query) =>
-                    $query->where(
-                        'is_active',
-                        $filters['is_active']
-                    )
-            )
 
-            ->latest()
+            'published_at'
+                => $query->orderBy(
+                    'published_at',
+                    $direction
+                ),
 
-            ->paginate($perPage);
+            'created_at'
+                => $query->orderBy(
+                    'created_at',
+                    $direction
+                ),
+
+            'updated_at'
+                => $query->orderBy(
+                    'updated_at',
+                    $direction
+                ),
+
+            default
+                => $query->latest(),
+        };
+
+        return $query->paginate(
+            $perPage
+        );
     }
 
-    /**
-     * Find product.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Product Detail
+    |--------------------------------------------------------------------------
+    */
+
     public function find(
         Product $product
     ): Product {
 
-        return $product->load(
-            'category'
-        );
+        return $product->load([
+            'category',
+            'images',
+            'skus',
+            'reviews',
+        ]);
     }
 
-    /**
-     * Create product.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Create Product
+    |--------------------------------------------------------------------------
+    */
+
     public function create(
         array $data,
-        ?UploadedFile $image,
+        ?UploadedFile $thumbnail,
         User $actor,
         Request $request
     ): Product {
 
         return DB::transaction(
+
             function () use (
                 $data,
-                $image,
+                $thumbnail,
                 $actor,
                 $request
             ) {
 
                 $data['slug'] =
-                    Str::slug(
+                    $this->generateUniqueSlug(
                         $data['name']
                     );
 
-                if ($image) {
+                $this->validateFeaturedProduct(
+                    $data
+                );
 
-                    $data['image'] =
-                        $this->storeImage(
-                            $image
+                if ($thumbnail) {
+
+                    $data['thumbnail'] =
+                        $this->storeThumbnail(
+                            $thumbnail
                         );
                 }
 
@@ -133,24 +242,25 @@ class ProductService
                         'user_agent' =>
                             $request->userAgent(),
 
-                        'new' => [
+                        'attributes' =>
+                            $product->only([
 
-                            'name' =>
-                                $product->name,
+                                'id',
 
-                            'price' =>
-                                $product->price,
+                                'category_id',
 
-                            'stock' =>
-                                $product->stock,
+                                'name',
 
-                            'category_id' =>
-                                $product->category_id,
+                                'slug',
 
-                            'is_active' =>
-                                $product->is_active,
-                        ],
+                                'status',
 
+                                'is_featured',
+
+                                'is_active',
+
+                                'published_at',
+                            ]),
                     ])
 
                     ->log(
@@ -166,71 +276,88 @@ class ProductService
         );
     }
 
-    /**
-     * Update product.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Update Product
+    |--------------------------------------------------------------------------
+    */
+
     public function update(
         Product $product,
         array $data,
-        ?UploadedFile $image,
+        ?UploadedFile $thumbnail,
         User $actor,
         Request $request
     ): Product {
 
         return DB::transaction(
+
             function () use (
                 $product,
                 $data,
-                $image,
+                $thumbnail,
                 $actor,
                 $request
             ) {
 
-                $oldData = [
+                $oldData =
+                    $product->only([
 
-                    'name' =>
-                        $product->name,
+                        'id',
 
-                    'price' =>
-                        $product->price,
+                        'category_id',
 
-                    'stock' =>
-                        $product->stock,
+                        'name',
 
-                    'category_id' =>
-                        $product->category_id,
+                        'slug',
 
-                    'image' =>
-                        $product->image,
+                        'thumbnail',
 
-                    'is_active' =>
-                        $product->is_active,
-                ];
+                        'status',
 
-                $data['slug'] =
-                    Str::slug(
-                        $data['name']
+                        'is_featured',
+
+                        'is_active',
+
+                        'published_at',
+                    ]);
+
+                if (
+                    isset($data['name'])
+                    &&
+                    $data['name']
+                    !== $product->name
+                ) {
+
+                    $data['slug'] =
+                        $this->generateUniqueSlug(
+                            $data['name'],
+                            $product->id
+                        );
+                }
+
+                $this->validateFeaturedProduct(
+                    array_merge(
+                        [
+                            'is_featured' =>
+                                $product->is_featured,
+
+                            'is_active' =>
+                                $product->is_active,
+                        ],
+                        $data
+                    )
+                );
+
+                if ($thumbnail) {
+
+                    $this->deleteThumbnail(
+                        $product
                     );
 
-                if ($image) {
-
-                    if (
-                        $product->image &&
-                        Storage::disk('public')
-                            ->exists(
-                                $product->image
-                            )
-                    ) {
-
-                        Storage::disk('public')
-                            ->delete(
-                                $product->image
-                            );
-                    }
-
-                    $data['image'] =
-                        $this->storeImage(
-                            $image
+                    $data['thumbnail'] =
+                        $this->storeThumbnail(
+                            $thumbnail
                         );
                 }
 
@@ -259,27 +386,28 @@ class ProductService
                         'old' =>
                             $oldData,
 
-                        'new' => [
+                        'new' =>
+                            $product->fresh()
+                                ->only([
 
-                            'name' =>
-                                $product->name,
+                                    'id',
 
-                            'price' =>
-                                $product->price,
+                                    'category_id',
 
-                            'stock' =>
-                                $product->stock,
+                                    'name',
 
-                            'category_id' =>
-                                $product->category_id,
+                                    'slug',
 
-                            'image' =>
-                                $product->image,
+                                    'thumbnail',
 
-                            'is_active' =>
-                                $product->is_active,
-                        ],
+                                    'status',
 
+                                    'is_featured',
+
+                                    'is_active',
+
+                                    'published_at',
+                                ]),
                     ])
 
                     ->log(
@@ -289,7 +417,9 @@ class ProductService
                 $this->clearCaches();
 
                 return $product
+
                     ->fresh()
+
                     ->load(
                         'category'
                     );
@@ -297,9 +427,12 @@ class ProductService
         );
     }
 
-    /**
-     * Delete product.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Delete Product
+    |--------------------------------------------------------------------------
+    */
+
     public function delete(
         Product $product,
         User $actor,
@@ -307,32 +440,56 @@ class ProductService
     ): void {
 
         DB::transaction(
+
             function () use (
                 $product,
                 $actor,
                 $request
             ) {
 
-                $oldData = [
+                if (
+                    $product->hasSku()
+                ) {
 
-                    'id' =>
-                        $product->id,
+                    throw ValidationException::withMessages([
+                        'product' => [
+                            'Produk tidak dapat dihapus karena masih memiliki SKU.',
+                        ],
+                    ]);
+                }
 
-                    'name' =>
-                        $product->name,
+                if (
+                    $product->hasReviews()
+                ) {
 
-                    'price' =>
-                        $product->price,
+                    throw ValidationException::withMessages([
+                        'product' => [
+                            'Produk tidak dapat dihapus karena masih memiliki review.',
+                        ],
+                    ]);
+                }
 
-                    'stock' =>
-                        $product->stock,
+                $oldData =
+                    $product->only([
 
-                    'category_id' =>
-                        $product->category_id,
+                        'id',
 
-                    'image' =>
-                        $product->image,
-                ];
+                        'category_id',
+
+                        'name',
+
+                        'slug',
+
+                        'thumbnail',
+
+                        'status',
+
+                        'is_featured',
+
+                        'is_active',
+
+                        'published_at',
+                    ]);
 
                 activity()
 
@@ -354,26 +511,15 @@ class ProductService
 
                         'old' =>
                             $oldData,
-
                     ])
 
                     ->log(
                         'Product deleted'
                     );
 
-                if (
-                    $product->image &&
-                    Storage::disk('public')
-                        ->exists(
-                            $product->image
-                        )
-                ) {
-
-                    Storage::disk('public')
-                        ->delete(
-                            $product->image
-                        );
-                }
+                $this->deleteThumbnail(
+                    $product
+                );
 
                 $product->delete();
 
@@ -382,70 +528,121 @@ class ProductService
         );
     }
 
-    /**
-     * Product statistics.
-     */
-    public function statistics(): array
-    {
-        return Cache::remember(
-            'product.statistics',
-            now()->addMinutes(10),
-            fn () => [
+    /*
+    |--------------------------------------------------------------------------
+    | Thumbnail
+    |--------------------------------------------------------------------------
+    */
 
-                'total_products' =>
-                    Product::count(),
-
-                'active_products' =>
-                    Product::where(
-                        'is_active',
-                        true
-                    )->count(),
-
-                'inactive_products' =>
-                    Product::where(
-                        'is_active',
-                        false
-                    )->count(),
-
-                'in_stock_products' =>
-                    Product::where(
-                        'stock',
-                        '>',
-                        0
-                    )->count(),
-
-                'out_of_stock_products' =>
-                    Product::where(
-                        'stock',
-                        '<=',
-                        0
-                    )->count(),
-
-                'inventory_value' =>
-                    Product::selectRaw(
-                        'SUM(price * stock) as total'
-                    )->value('total')
-                    ?? 0,
-            ]
-        );
-    }
-
-    /**
-     * Store image.
-     */
-    private function storeImage(
-        UploadedFile $image
+    private function storeThumbnail(
+        UploadedFile $thumbnail
     ): string {
 
-        return $image->store(
+        return $thumbnail->store(
             'products',
             'public'
         );
     }
 
-    /**
-     * Clear caches.
-     */
+    private function deleteThumbnail(
+        Product $product
+    ): void {
+
+        if (
+            ! $product->hasImage()
+        ) {
+            return;
+        }
+
+        if (
+            Storage::disk('public')
+                ->exists(
+                    $product->thumbnail
+                )
+        ) {
+
+            Storage::disk('public')
+                ->delete(
+                    $product->thumbnail
+                );
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Business Rules
+    |--------------------------------------------------------------------------
+    */
+
+    private function validateFeaturedProduct(
+        array $data
+    ): void {
+
+        if (
+            ($data['is_featured'] ?? false)
+            &&
+            ! ($data['is_active'] ?? false)
+        ) {
+
+            throw ValidationException::withMessages([
+                'is_featured' => [
+                    'Produk unggulan harus dalam kondisi aktif.',
+                ],
+            ]);
+        }
+    }
+
+    private function generateUniqueSlug(
+        string $name,
+        ?int $ignoreId = null
+    ): string {
+
+        $slug = Str::slug(
+            $name
+        );
+
+        $originalSlug = $slug;
+
+        $counter = 1;
+
+        while (
+            Product::query()
+
+                ->when(
+                    $ignoreId,
+                    fn ($query) =>
+                        $query->where(
+                            'id',
+                            '!=',
+                            $ignoreId
+                        )
+                )
+
+                ->where(
+                    'slug',
+                    $slug
+                )
+
+                ->exists()
+        ) {
+
+            $slug =
+                $originalSlug
+                . '-'
+                . $counter;
+
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache
+    |--------------------------------------------------------------------------
+    */
+
     private function clearCaches(): void
     {
         Cache::forget(

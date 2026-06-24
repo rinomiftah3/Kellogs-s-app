@@ -3,20 +3,26 @@
 namespace App\Services;
 
 use App\Models\User;
-
 use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RoleService
 {
+    /**
+     * System roles.
+     */
+    private const SYSTEM_ROLES = [
+        User::ROLE_SUPER_ADMIN,
+        User::ROLE_ADMIN,
+        User::ROLE_STAFF,
+        User::ROLE_CUSTOMER,
+    ];
+
     /**
      * Paginated roles.
      */
@@ -24,30 +30,21 @@ class RoleService
         array $filters = [],
         int $perPage = 15
     ) {
-
         return Role::query()
-
             ->with('permissions')
-
             ->withCount([
                 'users',
                 'permissions',
             ])
-
             ->when(
-                !empty($filters['search']),
-                fn ($query) =>
-                    $query->where(
-                        'name',
-                        'like',
-                        '%' .
-                        $filters['search']
-                        . '%'
-                    )
+                filled($filters['search'] ?? null),
+                fn ($query) => $query->where(
+                    'name',
+                    'like',
+                    '%' . $filters['search'] . '%'
+                )
             )
-
             ->latest()
-
             ->paginate($perPage);
     }
 
@@ -57,7 +54,6 @@ class RoleService
     public function find(
         Role $role
     ): Role {
-
         return $role->load([
             'permissions',
         ]);
@@ -71,21 +67,36 @@ class RoleService
         User $actor,
         Request $request
     ): Role {
-
         return DB::transaction(
             function () use (
                 $data,
                 $actor,
                 $request
             ) {
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent Recreating System Roles
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    in_array(
+                        $data['name'],
+                        self::SYSTEM_ROLES,
+                        true
+                    )
+                ) {
+                    throw ValidationException::withMessages([
+                        'name' => [
+                            'Role sistem tidak dapat dibuat ulang.',
+                        ],
+                    ]);
+                }
 
                 $role = Role::create([
+                    'name' => $data['name'],
 
-                    'name' =>
-                        $data['name'],
-
-                    'guard_name' =>
-                        'web',
+                    'guard_name' => 'web',
                 ]);
 
                 $role->syncPermissions(
@@ -98,17 +109,12 @@ class RoleService
                 );
 
                 activity()
-
                     ->causedBy($actor)
-
                     ->performedOn($role)
-
                     ->event(
                         'role_created'
                     )
-
                     ->withProperties([
-
                         'ip' =>
                             $request->ip(),
 
@@ -116,7 +122,6 @@ class RoleService
                             $request->userAgent(),
 
                         'new' => [
-
                             'name' =>
                                 $role->name,
 
@@ -127,7 +132,6 @@ class RoleService
                                     ->toArray(),
                         ],
                     ])
-
                     ->log(
                         'Role created'
                     );
@@ -148,7 +152,6 @@ class RoleService
         User $actor,
         Request $request
     ): Role {
-
         return DB::transaction(
             function () use (
                 $role,
@@ -156,7 +159,6 @@ class RoleService
                 $actor,
                 $request
             ) {
-
                 /*
                 |--------------------------------------------------------------------------
                 | Protect Super Admin Name
@@ -164,18 +166,31 @@ class RoleService
                 */
 
                 if (
-                    strtolower(
-                        $role->name
-                    ) === 'super admin'
+                    $role->name === User::ROLE_SUPER_ADMIN
                     &&
-                    strtolower(
-                        $data['name']
-                    ) !== 'super admin'
+                    $data['name'] !== User::ROLE_SUPER_ADMIN
                 ) {
-
                     throw ValidationException::withMessages([
                         'name' => [
                             'Role Super Admin tidak boleh diubah namanya.',
+                        ],
+                    ]);
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent Converting Other Roles Into Super Admin
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $role->name !== User::ROLE_SUPER_ADMIN
+                    &&
+                    $data['name'] === User::ROLE_SUPER_ADMIN
+                ) {
+                    throw ValidationException::withMessages([
+                        'name' => [
+                            'Role Super Admin tidak dapat dibuat melalui perubahan nama.',
                         ],
                     ]);
                 }
@@ -187,15 +202,11 @@ class RoleService
                 */
 
                 if (
-                    strtolower(
-                        $role->name
-                    ) === 'super admin'
+                    $role->name === User::ROLE_SUPER_ADMIN
                 ) {
-
-                    $allPermissions =
-                        Permission::query()
-                            ->pluck('name')
-                            ->toArray();
+                    $allPermissions = Permission::query()
+                        ->pluck('name')
+                        ->toArray();
 
                     $incomingPermissions =
                         $data['permissions']
@@ -214,7 +225,6 @@ class RoleService
                         !==
                         $incomingPermissions
                     ) {
-
                         throw ValidationException::withMessages([
                             'permissions' => [
                                 'Permission Super Admin tidak boleh dikurangi.',
@@ -224,7 +234,6 @@ class RoleService
                 }
 
                 $oldData = [
-
                     'name' =>
                         $role->name,
 
@@ -236,7 +245,6 @@ class RoleService
                 ];
 
                 $role->update([
-
                     'name' =>
                         $data['name'],
                 ]);
@@ -251,17 +259,12 @@ class RoleService
                 );
 
                 activity()
-
                     ->causedBy($actor)
-
                     ->performedOn($role)
-
                     ->event(
                         'role_updated'
                     )
-
                     ->withProperties([
-
                         'ip' =>
                             $request->ip(),
 
@@ -272,7 +275,6 @@ class RoleService
                             $oldData,
 
                         'new' => [
-
                             'name' =>
                                 $role->name,
 
@@ -283,7 +285,6 @@ class RoleService
                                     ->toArray(),
                         ],
                     ])
-
                     ->log(
                         'Role updated'
                     );
@@ -305,35 +306,47 @@ class RoleService
         User $actor,
         Request $request
     ): void {
-
         DB::transaction(
             function () use (
                 $role,
                 $actor,
                 $request
             ) {
-
                 /*
                 |--------------------------------------------------------------------------
-                | Protect Super Admin Role
+                | Protect System Roles
                 |--------------------------------------------------------------------------
                 */
 
                 if (
-                    strtolower(
-                        $role->name
-                    ) === 'super admin'
+                    $this->isProtectedRole(
+                        $role
+                    )
                 ) {
-
                     throw ValidationException::withMessages([
                         'role' => [
-                            'Role Super Admin tidak boleh dihapus.',
+                            'Role sistem tidak boleh dihapus.',
+                        ],
+                    ]);
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent Deleting Assigned Roles
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $role->users()->exists()
+                ) {
+                    throw ValidationException::withMessages([
+                        'role' => [
+                            'Role masih digunakan oleh user.',
                         ],
                     ]);
                 }
 
                 $oldData = [
-
                     'name' =>
                         $role->name,
 
@@ -345,17 +358,12 @@ class RoleService
                 ];
 
                 activity()
-
                     ->causedBy($actor)
-
                     ->performedOn($role)
-
                     ->event(
                         'role_deleted'
                     )
-
                     ->withProperties([
-
                         'ip' =>
                             $request->ip(),
 
@@ -365,7 +373,6 @@ class RoleService
                         'old' =>
                             $oldData,
                     ])
-
                     ->log(
                         'Role deleted'
                     );
@@ -380,19 +387,13 @@ class RoleService
     /**
      * Check protected role.
      */
-    public function isProtectedRole(
+    private function isProtectedRole(
         Role $role
     ): bool {
-
         return in_array(
-            strtolower(
-                $role->name
-            ),
-            [
-                'super admin',
-                'admin',
-                'staff',
-            ]
+            $role->name,
+            self::SYSTEM_ROLES,
+            true
         );
     }
 

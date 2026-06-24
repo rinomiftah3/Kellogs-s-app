@@ -22,7 +22,7 @@ class StoreProductSkuRequest extends FormRequest
     public function authorize(): bool
     {
         return $this->user()?->can(
-            'products.update'
+            'products.create'
         ) ?? false;
     }
 
@@ -252,6 +252,49 @@ class StoreProductSkuRequest extends FormRequest
 
                 'date',
             ],
+
+            'stock' => [
+
+                'nullable',
+
+                'integer',
+
+                'min:0',
+            ],
+
+            'minimum_stock' => [
+
+                'nullable',
+
+                'integer',
+
+                'min:0',
+            ],
+
+            'maximum_stock' => [
+
+                'nullable',
+
+                'integer',
+
+                'min:0',
+            ],
+
+            'reorder_point' => [
+
+                'nullable',
+
+                'integer',
+
+                'min:0',
+            ],
+
+            'allow_backorder' => [
+
+                'sometimes',
+
+                'boolean',
+            ],
         ];
     }
 
@@ -330,7 +373,22 @@ class StoreProductSkuRequest extends FormRequest
 
             'published_at.date' =>
                 'Tanggal publish tidak valid.',
-        ];
+
+            'stock.integer'
+                => 'Stok harus berupa angka.',
+
+            'stock.min'
+                => 'Stok tidak boleh negatif.',
+
+            'minimum_stock.integer'
+                => 'Minimum stok harus berupa angka.',
+
+            'reorder_point.integer'
+                => 'Reorder point harus berupa angka.',
+
+            'allow_backorder.boolean'
+                => 'Status backorder tidak valid.',
+                    ];
     }
 
     /**
@@ -384,7 +442,22 @@ class StoreProductSkuRequest extends FormRequest
 
             'published_at' =>
                 'tanggal publish',
-        ];
+
+            'stock'
+                => 'stok',
+
+            'minimum_stock'
+                => 'minimum stok',
+
+            'maximum_stock'
+                => 'maksimum stok',
+
+            'reorder_point'
+                => 'reorder point',
+
+            'allow_backorder'
+                => 'backorder',
+                    ];
     }
 
     /**

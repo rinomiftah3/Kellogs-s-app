@@ -234,30 +234,4 @@ class StoreCategoryRequest extends FormRequest
     /**
      * Additional validation.
      */
-    public function withValidator(
-        Validator $validator
-    ): void {
-
-        $validator->after(
-            function (
-                Validator $validator
-            ) {
-
-                if (
-                    $this->filled('parent_id')
-                    &&
-                    $this->parent_id ==
-                    $this->route('category')?->id
-                ) {
-
-                    $validator
-                        ->errors()
-                        ->add(
-                            'parent_id',
-                            'Kategori tidak boleh menjadi induknya sendiri.'
-                        );
-                }
-            }
-        );
-    }
 }

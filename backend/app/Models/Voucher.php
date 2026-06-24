@@ -20,6 +20,69 @@ use Spatie\Activitylog\Support\LogOptions;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string|null $description
+ * @property string $type
+ * @property numeric $discount_value
+ * @property numeric|null $maximum_discount
+ * @property numeric $minimum_purchase
+ * @property int|null $usage_limit
+ * @property int $usage_per_user
+ * @property int $used_count
+ * @property bool $is_active
+ * @property bool $is_public
+ * @property bool $is_stackable
+ * @property \Illuminate\Support\Carbon $start_at
+ * @property \Illuminate\Support\Carbon $end_at
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read bool $is_expired
+ * @property-read bool $is_started
+ * @property-read int|null $remaining_usage
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\VoucherUsage> $usages
+ * @property-read int|null $usages_count
+ * @method static Builder<static>|Voucher active()
+ * @method static Builder<static>|Voucher expired()
+ * @method static \Database\Factories\VoucherFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Voucher newModelQuery()
+ * @method static Builder<static>|Voucher newQuery()
+ * @method static Builder<static>|Voucher onlyTrashed()
+ * @method static Builder<static>|Voucher public()
+ * @method static Builder<static>|Voucher query()
+ * @method static Builder<static>|Voucher search(?string $keyword)
+ * @method static Builder<static>|Voucher started()
+ * @method static Builder<static>|Voucher type(string $type)
+ * @method static Builder<static>|Voucher valid()
+ * @method static Builder<static>|Voucher whereCode($value)
+ * @method static Builder<static>|Voucher whereCreatedAt($value)
+ * @method static Builder<static>|Voucher whereDeletedAt($value)
+ * @method static Builder<static>|Voucher whereDescription($value)
+ * @method static Builder<static>|Voucher whereDiscountValue($value)
+ * @method static Builder<static>|Voucher whereEndAt($value)
+ * @method static Builder<static>|Voucher whereId($value)
+ * @method static Builder<static>|Voucher whereIsActive($value)
+ * @method static Builder<static>|Voucher whereIsPublic($value)
+ * @method static Builder<static>|Voucher whereIsStackable($value)
+ * @method static Builder<static>|Voucher whereMaximumDiscount($value)
+ * @method static Builder<static>|Voucher whereMetadata($value)
+ * @method static Builder<static>|Voucher whereMinimumPurchase($value)
+ * @method static Builder<static>|Voucher whereName($value)
+ * @method static Builder<static>|Voucher whereStartAt($value)
+ * @method static Builder<static>|Voucher whereType($value)
+ * @method static Builder<static>|Voucher whereUpdatedAt($value)
+ * @method static Builder<static>|Voucher whereUsageLimit($value)
+ * @method static Builder<static>|Voucher whereUsagePerUser($value)
+ * @method static Builder<static>|Voucher whereUsedCount($value)
+ * @method static Builder<static>|Voucher withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Voucher withoutTrashed()
+ * @mixin \Eloquent
  */
 class Voucher extends Model
 {

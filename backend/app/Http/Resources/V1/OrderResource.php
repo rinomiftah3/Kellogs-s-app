@@ -157,6 +157,22 @@ class OrderResource extends JsonResource
             'payment_status' =>
                 $this->payment_status,
 
+            'is_payment_pending'
+                => $this->payment_status
+                    === 'pending',
+
+            'is_payment_paid'
+                => $this->payment_status
+                    === 'paid',
+
+            'is_payment_failed'
+                => $this->payment_status
+                    === 'failed',
+
+            'is_payment_refunded'
+                => $this->payment_status
+                    === 'refunded',
+
             'is_paid' =>
                 $this->isPaid(),
 
@@ -323,7 +339,13 @@ class OrderResource extends JsonResource
 
             'cancelled_at_human' =>
                 $this->cancelled_at?->diffForHumans(),
+'items' => OrderItemResource::collection(
+    $this->whenLoaded('items')
+),
 
+'payment' => new PaymentResource(
+    $this->whenLoaded('payment')
+),
             /*
             |--------------------------------------------------------------------------
             | Timestamps

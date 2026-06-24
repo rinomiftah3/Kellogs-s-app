@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Activity;
 use App\Models\User;
-
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthService
@@ -19,138 +18,117 @@ class AuthService
         string $ip,
         ?string $userAgent = null
     ): array {
+        $user = User::query()
+            ->with([
+                'roles.permissions',
+            ])
+            ->where(
+                'email',
+                $credentials['email']
+            )
+            ->first();
 
-        return DB::transaction(
-            function () use (
-                $credentials,
-                $ip,
+        if (
+            ! $user ||
+            ! Hash::check(
+                $credentials['password'],
+                $user->password
+            )
+        ) {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Email atau password salah.',
+                ],
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Active User Validation
+        |--------------------------------------------------------------------------
+        */
+
+        if (! $user->isActive()) {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Akun tidak aktif.',
+                ],
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Email Verification Validation
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            config(
+                'auth.require_verified_email',
+                false
+            )
+            && ! $user->isVerified()
+        ) {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Email belum diverifikasi.',
+                ],
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Token
+        |--------------------------------------------------------------------------
+        */
+
+        $token = $user
+            ->createToken(
                 $userAgent
-            ) {
+                    ? Str::limit($userAgent, 40)
+                    : 'mobile-app'
+            )
+            ->plainTextToken;
 
-                $user = User::query()
+        /*
+        |--------------------------------------------------------------------------
+        | Update Last Login
+        |--------------------------------------------------------------------------
+        */
 
-                    ->with([
-                        'roles.permissions',
-                    ])
+        $user->update([
+            'last_login_at' => now(),
+        ]);
 
-                    ->where(
-                        'email',
-                        $credentials['email']
-                    )
+        /*
+        |--------------------------------------------------------------------------
+        | Activity Log
+        |--------------------------------------------------------------------------
+        */
 
-                    ->first();
+        activity()
+            ->causedBy($user)
+            ->performedOn($user)
+            ->event(
+                Activity::EVENT_LOGIN
+            )
+            ->withProperties([
+                'ip' => $ip,
+                'user_agent' => $userAgent,
+            ])
+            ->log(
+                'User login'
+            );
 
-                if (
-                    !$user ||
-                    !Hash::check(
-                        $credentials['password'],
-                        $user->password
-                    )
-                ) {
+        return [
+            'user' => $this->userPayload(
+                $user->fresh([
+                    'roles.permissions',
+                ])
+            ),
 
-                    throw ValidationException::withMessages([
-                        'email' => [
-                            'Email atau password salah.',
-                        ],
-                    ]);
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Active User Validation
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    isset($user->is_active) &&
-                    !$user->is_active
-                ) {
-
-                    throw ValidationException::withMessages([
-                        'email' => [
-                            'Akun tidak aktif.',
-                        ],
-                    ]);
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Revoke Existing Tokens
-                |--------------------------------------------------------------------------
-                */
-
-                $user
-                    ->tokens()
-                    ->delete();
-
-                /*
-                |--------------------------------------------------------------------------
-                | Create Token
-                |--------------------------------------------------------------------------
-                */
-
-                $token = $user
-                    ->createToken(
-                        'auth_token'
-                    )
-                    ->plainTextToken;
-
-                /*
-                |--------------------------------------------------------------------------
-                | Update Last Login
-                |--------------------------------------------------------------------------
-                */
-
-                $user->update([
-                    'last_login_at' => now(),
-                ]);
-
-                /*
-                |--------------------------------------------------------------------------
-                | Activity Log
-                |--------------------------------------------------------------------------
-                */
-
-                activity()
-
-                    ->causedBy(
-                        $user
-                    )
-
-                    ->performedOn(
-                        $user
-                    )
-
-                    ->event(
-                        'login'
-                    )
-
-                    ->withProperties([
-                        'ip' =>
-                            $ip,
-
-                        'user_agent' =>
-                            $userAgent,
-                    ])
-
-                    ->log(
-                        'User login'
-                    );
-
-                return [
-
-                    'user' =>
-                        $this->userPayload(
-                            $user->fresh([
-                                'roles.permissions',
-                            ])
-                        ),
-
-                    'token' =>
-                        $token,
-                ];
-            }
-        );
+            'token' => $token,
+        ];
     }
 
     /**
@@ -159,7 +137,6 @@ class AuthService
     public function me(
         User $user
     ): array {
-
         $user->loadMissing([
             'roles.permissions',
         ]);
@@ -177,29 +154,16 @@ class AuthService
         string $ip,
         ?string $userAgent = null
     ): void {
-
         activity()
-
-            ->causedBy(
-                $user
-            )
-
-            ->performedOn(
-                $user
-            )
-
+            ->causedBy($user)
+            ->performedOn($user)
             ->event(
-                'logout'
+                Activity::EVENT_LOGOUT
             )
-
             ->withProperties([
-                'ip' =>
-                    $ip,
-
-                'user_agent' =>
-                    $userAgent,
+                'ip' => $ip,
+                'user_agent' => $userAgent,
             ])
-
             ->log(
                 'User logout'
             );
@@ -217,29 +181,17 @@ class AuthService
         string $ip,
         ?string $userAgent = null
     ): void {
-
         activity()
-
-            ->causedBy(
-                $user
-            )
-
-            ->performedOn(
-                $user
-            )
-
+            ->causedBy($user)
+            ->performedOn($user)
             ->event(
-                'logout_all'
+                Activity::EVENT_LOGOUT
             )
-
             ->withProperties([
-                'ip' =>
-                    $ip,
-
-                'user_agent' =>
-                    $userAgent,
+                'ip' => $ip,
+                'user_agent' => $userAgent,
+                'all_devices' => true,
             ])
-
             ->log(
                 'User logout all devices'
             );
@@ -255,48 +207,37 @@ class AuthService
     private function userPayload(
         User $user
     ): array {
-
         return [
+            'id' => $user->id,
 
-            'id' =>
-                $user->id,
+            'name' => $user->name,
 
-            'name' =>
-                $user->name,
+            'email' => $user->email,
 
-            'email' =>
-                $user->email,
+            'avatar' => $user->avatar,
 
-            'avatar' =>
-                $user->avatar,
+            'avatar_url' => $user->avatar_url,
 
-            'avatar_url' =>
-                $user->avatar_url,
+            'roles' => $user
+                ->getRoleNames()
+                ->values(),
 
-            'roles' =>
-                $user
-                    ->getRoleNames()
-                    ->values(),
+            'permissions' => $user
+                ->getAllPermissions()
+                ->pluck('name')
+                ->values(),
 
-            'permissions' =>
-                $user
-                    ->getAllPermissions()
-                    ->pluck('name')
-                    ->values(),
+            'is_active' => $user->isActive(),
 
-            'is_active' =>
-                (bool) $user->is_active,
+            'is_verified' => $user->isVerified(),
 
-            'is_verified' =>
-                !is_null(
-                    $user->email_verified_at
-                ),
+            'email_verified_at' => $user
+                ->email_verified_at
+                ?->toISOString(),
 
-            'email_verified_at' =>
-                $user->email_verified_at?->toISOString(),
-
-            'last_login_at' =>
-                $user->last_login_at?->toISOString(),
+            'last_login_at' => $user
+                ->last_login_at
+                ?->toISOString(),
         ];
     }
 }

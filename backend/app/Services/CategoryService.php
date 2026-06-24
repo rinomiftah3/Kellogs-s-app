@@ -4,15 +4,12 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\User;
-
-use Illuminate\Http\Request;
-
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
 use Illuminate\Validation\ValidationException;
 
 class CategoryService
@@ -24,25 +21,61 @@ class CategoryService
         array $filters = [],
         int $perPage = 15
     ): LengthAwarePaginator {
-
-        return Category::query()
-
-            ->withCount('products')
-
-            ->when(
-                filled($filters['search'] ?? null),
-                fn ($query) =>
-                    $query->where(
-                        'name',
-                        'like',
-                        '%' .
-                        $filters['search'] .
-                        '%'
-                    )
+        $query = Category::query()
+            ->with([
+                'parent:id,name',
+            ])
+            ->withCount([
+                'products',
+                'children',
+            ])
+            ->search(
+                $filters['search'] ?? null
             )
+            ->when(
+                isset($filters['parent_id']),
+                fn ($query) => $query->where(
+                    'parent_id',
+                    $filters['parent_id']
+                )
+            )
+            ->when(
+                isset($filters['is_active']),
+                fn ($query) => $query->where(
+                    'is_active',
+                    $filters['is_active']
+                )
+            )
+            ->when(
+                isset($filters['has_products']),
+                fn ($query) => $filters['has_products']
+                    ? $query->hasProducts()
+                    : $query->empty()
+            );
 
-            ->latest()
+        /*
+        |--------------------------------------------------------------------------
+        | Parent / Child Filter
+        |--------------------------------------------------------------------------
+        */
 
+        if (isset($filters['is_parent'])) {
+            $query = $filters['is_parent']
+                ? $query->parentCategories()
+                : $query->childCategories();
+        } elseif (isset($filters['is_child'])) {
+            $query = $filters['is_child']
+                ? $query->childCategories()
+                : $query->parentCategories();
+        }
+
+        return $query
+            ->orderBy(
+                $filters['sort_by']
+                    ?? 'sort_order',
+                $filters['sort_direction']
+                    ?? 'asc'
+            )
             ->paginate($perPage);
     }
 
@@ -52,55 +85,58 @@ class CategoryService
     public function find(
         Category $category
     ): Category {
-
         return $category
-            ->loadCount(
-                'products'
-            );
+            ->load([
+                'parent:id,name',
+                'children:id,parent_id,name,is_active',
+            ])
+            ->loadCount([
+                'products',
+                'children',
+            ]);
     }
 
     /**
      * Create category.
      */
+
     public function create(
         array $data,
         User $actor,
         Request $request
     ): Category {
-
         return DB::transaction(
             function () use (
                 $data,
                 $actor,
                 $request
             ) {
-
                 $data['slug'] =
-                    Str::slug(
-                        $data['name']
+                    $this->generateUniqueSlug(
+                        $data['slug']
+                            ?? $data['name']
                     );
-
-                $category =
-                    Category::create(
-                        $data
+                if (isset($data['image'])) {
+                    $data['image'] = $data['image']->store(
+                        'categories',
+                        'public'
                     );
+                }
+                $category = Category::create(
+                    $data
+                );
 
                 activity()
-
                     ->causedBy(
                         $actor
                     )
-
                     ->performedOn(
                         $category
                     )
-
                     ->event(
                         'category_created'
                     )
-
                     ->withProperties([
-
                         'ip' =>
                             $request->ip(),
 
@@ -108,6 +144,8 @@ class CategoryService
                             $request->userAgent(),
 
                         'new' => [
+                            'parent_id' =>
+                                $category->parent_id,
 
                             'name' =>
                                 $category->name,
@@ -118,12 +156,16 @@ class CategoryService
                             'description' =>
                                 $category->description,
 
+                            'image' =>
+                                $category->image,
+
+                            'sort_order' =>
+                                $category->sort_order,
+
                             'is_active' =>
                                 $category->is_active,
                         ],
-
                     ])
-
                     ->log(
                         'Category created'
                     );
@@ -131,9 +173,13 @@ class CategoryService
                 $this->clearCaches();
 
                 return $category
-                    ->loadCount(
-                        'products'
-                    );
+                    ->load([
+                        'parent:id,name',
+                    ])
+                    ->loadCount([
+                        'products',
+                        'children',
+                    ]);
             }
         );
     }
@@ -147,7 +193,6 @@ class CategoryService
         User $actor,
         Request $request
     ): Category {
-
         return DB::transaction(
             function () use (
                 $category,
@@ -155,8 +200,9 @@ class CategoryService
                 $actor,
                 $request
             ) {
-
                 $oldData = [
+                    'parent_id' =>
+                        $category->parent_id,
 
                     'name' =>
                         $category->name,
@@ -167,35 +213,58 @@ class CategoryService
                     'description' =>
                         $category->description,
 
+                    'image' =>
+                        $category->image,
+
+                    'sort_order' =>
+                        $category->sort_order,
+
                     'is_active' =>
                         $category->is_active,
                 ];
 
                 $data['slug'] =
-                    Str::slug(
-                        $data['name']
+                    $this->generateUniqueSlug(
+                        $data['slug']
+                            ?? $data['name'],
+                        $category->id
+                        
                     );
 
+                if (isset($data['image'])) {
+
+    if (
+        filled($category->image)
+        &&
+        ! str_starts_with($category->image, 'http')
+        &&
+        Storage::disk('public')->exists($category->image)
+    ) {
+        Storage::disk('public')->delete(
+            $category->image
+        );
+    }
+
+    $data['image'] = $data['image']->store(
+        'categories',
+        'public'
+    );
+}
                 $category->update(
                     $data
                 );
 
                 activity()
-
                     ->causedBy(
                         $actor
                     )
-
                     ->performedOn(
                         $category
                     )
-
                     ->event(
                         'category_updated'
                     )
-
                     ->withProperties([
-
                         'ip' =>
                             $request->ip(),
 
@@ -206,6 +275,8 @@ class CategoryService
                             $oldData,
 
                         'new' => [
+                            'parent_id' =>
+                                $category->parent_id,
 
                             'name' =>
                                 $category->name,
@@ -216,12 +287,16 @@ class CategoryService
                             'description' =>
                                 $category->description,
 
+                            'image' =>
+                                $category->image,
+
+                            'sort_order' =>
+                                $category->sort_order,
+
                             'is_active' =>
                                 $category->is_active,
                         ],
-
                     ])
-
                     ->log(
                         'Category updated'
                     );
@@ -230,9 +305,13 @@ class CategoryService
 
                 return $category
                     ->fresh()
-                    ->loadCount(
-                        'products'
-                    );
+                    ->load([
+                        'parent:id,name',
+                    ])
+                    ->loadCount([
+                        'products',
+                        'children',
+                    ]);
             }
         );
     }
@@ -245,20 +324,17 @@ class CategoryService
         User $actor,
         Request $request
     ): void {
-
         DB::transaction(
             function () use (
                 $category,
                 $actor,
                 $request
             ) {
-
                 if (
                     $category
                         ->products()
                         ->exists()
                 ) {
-
                     throw ValidationException::withMessages([
                         'category' => [
                             'Kategori tidak dapat dihapus karena masih digunakan oleh produk.',
@@ -266,10 +342,24 @@ class CategoryService
                     ]);
                 }
 
-                $oldData = [
+                if (
+                    $category
+                        ->children()
+                        ->exists()
+                ) {
+                    throw ValidationException::withMessages([
+                        'category' => [
+                            'Kategori tidak dapat dihapus karena masih memiliki subkategori.',
+                        ],
+                    ]);
+                }
 
+                $oldData = [
                     'id' =>
                         $category->id,
+
+                    'parent_id' =>
+                        $category->parent_id,
 
                     'name' =>
                         $category->name,
@@ -280,26 +370,27 @@ class CategoryService
                     'description' =>
                         $category->description,
 
+                    'image' =>
+                        $category->image,
+
+                    'sort_order' =>
+                        $category->sort_order,
+
                     'is_active' =>
                         $category->is_active,
                 ];
 
                 activity()
-
                     ->causedBy(
                         $actor
                     )
-
                     ->performedOn(
                         $category
                     )
-
                     ->event(
                         'category_deleted'
                     )
-
                     ->withProperties([
-
                         'ip' =>
                             $request->ip(),
 
@@ -308,12 +399,31 @@ class CategoryService
 
                         'old' =>
                             $oldData,
-
                     ])
-
                     ->log(
                         'Category deleted'
                     );
+
+                if (
+                    filled(
+                        $category->image
+                    )
+                    &&
+                    ! str_starts_with(
+                        $category->image,
+                        'http'
+                    )
+                    &&
+                    Storage::disk('public')
+                        ->exists(
+                            $category->image
+                        )
+                ) {
+                    Storage::disk('public')
+                        ->delete(
+                            $category->image
+                        );
+                }
 
                 $category->delete();
 
@@ -331,24 +441,64 @@ class CategoryService
             'category.statistics',
             now()->addMinutes(10),
             fn () => [
-
                 'total_categories' =>
                     Category::count(),
 
                 'active_categories' =>
-                    Category::where(
-                        'is_active',
-                        true
-                    )->count(),
+                    Category::active()->count(),
 
                 'inactive_categories' =>
-                    Category::where(
-                        'is_active',
-                        false
-                    )->count(),
+                    Category::inactive()->count(),
 
+                'parent_categories' =>
+                    Category::parentCategories()->count(),
+
+                'child_categories' =>
+                    Category::childCategories()->count(),
             ]
         );
+    }
+
+    /**
+     * Generate unique slug.
+     */
+    private function generateUniqueSlug(
+        string $name,
+        ?int $ignoreId = null
+    ): string {
+        $baseSlug = Str::slug(
+            $name
+        );
+
+        $slug = $baseSlug;
+
+        $counter = 2;
+
+        while (
+            Category::query()
+                ->when(
+                    $ignoreId,
+                    fn ($query) => $query->where(
+                        'id',
+                        '!=',
+                        $ignoreId
+                    )
+                )
+                ->where(
+                    'slug',
+                    $slug
+                )
+                ->exists()
+        ) {
+            $slug =
+                $baseSlug .
+                '-' .
+                $counter;
+
+            $counter++;
+        }
+
+        return $slug;
     }
 
     /**

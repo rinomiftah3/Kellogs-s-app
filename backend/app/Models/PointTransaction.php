@@ -14,6 +14,73 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $customer_profile_id
+ * @property int|null $order_id
+ * @property string $transaction_number
+ * @property string $type
+ * @property int $points
+ * @property int $balance_before
+ * @property int $balance_after
+ * @property string|null $reference_type
+ * @property int|null $reference_id
+ * @property string $title
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $expired_at
+ * @property int|null $approved_by
+ * @property \Illuminate\Support\Carbon|null $approved_at
+ * @property string $status
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $transaction_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\User|null $approver
+ * @property-read \App\Models\CustomerProfile|null $customerProfile
+ * @property-read string $formatted_points
+ * @property-read bool $is_credit
+ * @property-read bool $is_debit
+ * @property-read bool $is_expired
+ * @property-read \App\Models\Order|null $order
+ * @property-read Model|\Eloquent|null $reference
+ * @method static Builder<static>|PointTransaction completed()
+ * @method static Builder<static>|PointTransaction expired()
+ * @method static Builder<static>|PointTransaction forCustomer(?int $customerId)
+ * @method static Builder<static>|PointTransaction latest()
+ * @method static Builder<static>|PointTransaction newModelQuery()
+ * @method static Builder<static>|PointTransaction newQuery()
+ * @method static Builder<static>|PointTransaction onlyTrashed()
+ * @method static Builder<static>|PointTransaction pending()
+ * @method static Builder<static>|PointTransaction query()
+ * @method static Builder<static>|PointTransaction search(?string $keyword)
+ * @method static Builder<static>|PointTransaction status(?string $status)
+ * @method static Builder<static>|PointTransaction type(?string $type)
+ * @method static Builder<static>|PointTransaction whereApprovedAt($value)
+ * @method static Builder<static>|PointTransaction whereApprovedBy($value)
+ * @method static Builder<static>|PointTransaction whereBalanceAfter($value)
+ * @method static Builder<static>|PointTransaction whereBalanceBefore($value)
+ * @method static Builder<static>|PointTransaction whereCreatedAt($value)
+ * @method static Builder<static>|PointTransaction whereCustomerProfileId($value)
+ * @method static Builder<static>|PointTransaction whereDescription($value)
+ * @method static Builder<static>|PointTransaction whereExpiredAt($value)
+ * @method static Builder<static>|PointTransaction whereId($value)
+ * @method static Builder<static>|PointTransaction whereMetadata($value)
+ * @method static Builder<static>|PointTransaction whereOrderId($value)
+ * @method static Builder<static>|PointTransaction wherePoints($value)
+ * @method static Builder<static>|PointTransaction whereReferenceId($value)
+ * @method static Builder<static>|PointTransaction whereReferenceType($value)
+ * @method static Builder<static>|PointTransaction whereStatus($value)
+ * @method static Builder<static>|PointTransaction whereTitle($value)
+ * @method static Builder<static>|PointTransaction whereTransactionAt($value)
+ * @method static Builder<static>|PointTransaction whereTransactionNumber($value)
+ * @method static Builder<static>|PointTransaction whereType($value)
+ * @method static Builder<static>|PointTransaction whereUpdatedAt($value)
+ * @method static Builder<static>|PointTransaction withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|PointTransaction withoutTrashed()
+ * @mixin \Eloquent
+ */
 class PointTransaction extends Model
 {
     use HasFactory;

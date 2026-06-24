@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Product;
 use App\Models\ProductSku;
+use App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -28,7 +29,21 @@ class ProductSkuFactory extends Factory
     | Default State
     |--------------------------------------------------------------------------
     */
+public function configure(): static
+{
+    return $this->afterCreating(
 
+        function (ProductSku $sku) {
+
+            Inventory::factory()
+                ->create([
+
+                    'product_sku_id'
+                        => $sku->id,
+                ]);
+        }
+    );
+}
     public function definition(): array
     {
         $price = fake()->numberBetween(

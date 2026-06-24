@@ -17,6 +17,36 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * Review Image Management
  *
  * Enterprise Review System
+ *
+ * @property int $id
+ * @property int $product_review_id
+ * @property string $image_url
+ * @property string|null $alt_text
+ * @property int $sort_order
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\ProductReview|null $review
+ * @method static Builder<static>|ProductReviewImage active()
+ * @method static Builder<static>|ProductReviewImage byReview(?int $reviewId)
+ * @method static Builder<static>|ProductReviewImage hasAltText()
+ * @method static Builder<static>|ProductReviewImage inactive()
+ * @method static Builder<static>|ProductReviewImage latest()
+ * @method static Builder<static>|ProductReviewImage newModelQuery()
+ * @method static Builder<static>|ProductReviewImage newQuery()
+ * @method static Builder<static>|ProductReviewImage ordered()
+ * @method static Builder<static>|ProductReviewImage query()
+ * @method static Builder<static>|ProductReviewImage whereAltText($value)
+ * @method static Builder<static>|ProductReviewImage whereCreatedAt($value)
+ * @method static Builder<static>|ProductReviewImage whereId($value)
+ * @method static Builder<static>|ProductReviewImage whereImageUrl($value)
+ * @method static Builder<static>|ProductReviewImage whereIsActive($value)
+ * @method static Builder<static>|ProductReviewImage whereProductReviewId($value)
+ * @method static Builder<static>|ProductReviewImage whereSortOrder($value)
+ * @method static Builder<static>|ProductReviewImage whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class ProductReviewImage extends Model
 {
@@ -227,7 +257,7 @@ class ProductReviewImage extends Model
 
     public function customerName(): ?string
     {
-        return $this->review?->customer?->full_name;
+        return $this->review?->customerProfile?->full_name;
     }
 
     /*

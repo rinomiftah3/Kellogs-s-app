@@ -277,8 +277,25 @@ class UpdateCategoryRequest extends FormRequest
                             'parent_id',
                             'Kategori tidak boleh menjadi induknya sendiri.'
                         );
+                    if (
+                        $category instanceof Category &&
+                        filled($this->parent_id)
+                    ) {
+                        $isChild = $category
+                            ->children()
+                            ->where('id', $this->parent_id)
+                            ->exists();
+
+                        if ($isChild) {
+                            $validator->errors()->add(
+                                'parent_id',
+                                'Kategori tidak boleh menjadi turunan dari subkategorinya sendiri.'
+                            );
+                        }
+                    }
                 }
             }
         );
     }
+    
 }

@@ -204,6 +204,33 @@ class ProductSkuResource extends JsonResource
                     default
                         => 'Available',
                 },
+            'inventory' => [
+            
+            'id' 
+                => $this->inventory?->id,
+
+            'current_stock'
+                => $this->inventory?->current_stock ?? 0,
+
+            'reserved_stock'
+                => $this->inventory?->reserved_stock ?? 0,
+
+            'available_stock'
+                => $this->inventory?->available_stock ?? 0,
+
+            'minimum_stock'
+                => $this->inventory?->minimum_stock ?? 0,
+
+            'maximum_stock'
+                => $this->inventory?->maximum_stock,
+
+            'reorder_point'
+                => $this->inventory?->reorder_point ?? 0,
+
+            'allow_backorder'
+                => $this->inventory?->allow_backorder ?? false,
+
+        ],
 
             /*
             |--------------------------------------------------------------------------
@@ -246,26 +273,47 @@ class ProductSkuResource extends JsonResource
                     $this->optionValues
                         ->map(
                             fn ($value) => [
+                                'id' => $value->id,
 
-                                'id' =>
-                                    $value->id,
+                                'value' => $value->value,
 
-                                'name' =>
-                                    $value->value,
+                                'option' => [
 
-                                'option' =>
-                                    $value
-                                        ->relationLoaded(
-                                            'option'
-                                        )
-                                        ? $value
-                                            ->option
-                                            ?->name
-                                        : null,
+                                    'id' =>
+                                        $value->option?->id,
+
+                                    'name' =>
+                                        $value->option?->name,
+                                ],
                             ]
+
+                                
                         )
                         ->values()
                 ),
+
+                'variation_label' =>
+
+                    $this->whenLoaded(
+
+                        'optionValues',
+
+                        fn () =>
+
+                            $this->optionValues
+
+                                ->map(
+
+                                    fn ($value) =>
+
+                                        ($value->option?->name ?? '-')
+                                        . ': '
+                                        . $value->value
+
+                                )
+
+                                ->implode(', ')
+                    ),
 
             /*
             |--------------------------------------------------------------------------
@@ -351,6 +399,22 @@ class ProductSkuResource extends JsonResource
                 $this->isPublished()
                 &&
                 $this->isInStock(),
+
+                'can_be_deleted' =>
+
+                ! $this->is_default
+
+                &&
+
+                ! $this->cartItems()->exists()
+
+                &&
+
+                ! $this->checkoutItems()->exists()
+
+                &&
+
+                ! $this->orderItems()->exists(),
 
             /*
             |--------------------------------------------------------------------------

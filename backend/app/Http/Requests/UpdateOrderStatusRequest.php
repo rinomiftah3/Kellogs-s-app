@@ -32,7 +32,7 @@ class UpdateOrderStatusRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return $this->user()?->can('manage orders') ?? false;
+        return $this->user()?->can('orders.update') ?? false;
     }
 
     /*
@@ -231,6 +231,7 @@ class UpdateOrderStatusRequest extends FormRequest
 
                     Order::STATUS_PROCESSING => [
                         Order::STATUS_SHIPPED,
+                        Order::STATUS_CANCELLED,
                     ],
 
                     Order::STATUS_SHIPPED => [

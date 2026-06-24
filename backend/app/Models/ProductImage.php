@@ -11,6 +11,40 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $product_id
+ * @property string $image_url
+ * @property string|null $alt_text
+ * @property int $sort_order
+ * @property bool $is_primary
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read string|null $full_image_url
+ * @property-read \App\Models\Product|null $product
+ * @method static Builder<static>|ProductImage active()
+ * @method static Builder<static>|ProductImage byProduct(?int $productId)
+ * @method static Builder<static>|ProductImage inactive()
+ * @method static Builder<static>|ProductImage newModelQuery()
+ * @method static Builder<static>|ProductImage newQuery()
+ * @method static Builder<static>|ProductImage ordered()
+ * @method static Builder<static>|ProductImage primary()
+ * @method static Builder<static>|ProductImage primaryFirst()
+ * @method static Builder<static>|ProductImage query()
+ * @method static Builder<static>|ProductImage whereAltText($value)
+ * @method static Builder<static>|ProductImage whereCreatedAt($value)
+ * @method static Builder<static>|ProductImage whereId($value)
+ * @method static Builder<static>|ProductImage whereImageUrl($value)
+ * @method static Builder<static>|ProductImage whereIsActive($value)
+ * @method static Builder<static>|ProductImage whereIsPrimary($value)
+ * @method static Builder<static>|ProductImage whereProductId($value)
+ * @method static Builder<static>|ProductImage whereSortOrder($value)
+ * @method static Builder<static>|ProductImage whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class ProductImage extends Model
 {
     use HasFactory;

@@ -79,20 +79,6 @@ class UpdateProductSkuRequest extends FormRequest
 
         return [
 
-            'product_id' => [
-
-                'bail',
-
-                'required',
-
-                'integer',
-
-                Rule::exists(
-                    'products',
-                    'id'
-                ),
-            ],
-
             'sku' => [
 
                 'bail',
@@ -263,6 +249,49 @@ class UpdateProductSkuRequest extends FormRequest
 
                 'date',
             ],
+
+            'stock' => [
+
+            'nullable',
+
+            'integer',
+
+            'min:0',
+        ],
+
+        'minimum_stock' => [
+
+            'nullable',
+
+            'integer',
+
+            'min:0',
+        ],
+
+        'maximum_stock' => [
+
+            'nullable',
+
+            'integer',
+
+            'min:0',
+        ],
+
+        'reorder_point' => [
+
+            'nullable',
+
+            'integer',
+
+            'min:0',
+        ],
+
+        'allow_backorder' => [
+
+            'sometimes',
+
+            'boolean',
+        ],
         ];
     }
 
@@ -341,6 +370,21 @@ class UpdateProductSkuRequest extends FormRequest
 
             'published_at.date' =>
                 'Tanggal publish tidak valid.',
+
+            'stock.integer'
+                => 'Stok harus berupa angka.',
+
+            'stock.min'
+                => 'Stok tidak boleh negatif.',
+
+            'minimum_stock.integer'
+                => 'Minimum stok harus berupa angka.',
+
+            'reorder_point.integer'
+                => 'Reorder point harus berupa angka.',
+
+            'allow_backorder.boolean'
+                => 'Status backorder tidak valid.',
         ];
     }
 
@@ -395,6 +439,21 @@ class UpdateProductSkuRequest extends FormRequest
 
             'published_at' =>
                 'tanggal publish',
+            
+            'stock'
+                => 'stok',
+
+            'minimum_stock'
+                => 'minimum stok',
+
+            'maximum_stock'
+                => 'maksimum stok',
+
+            'reorder_point'
+                => 'reorder point',
+
+            'allow_backorder'
+                => 'backorder',
         ];
     }
 

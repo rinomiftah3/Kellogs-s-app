@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Traits\ApiResponse;
+use App\Http\Controllers\Controller;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdatePasswordRequest;
+use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Requests\UploadAvatarRequest;
 
 use App\Services\ProfileService;
 
-use App\Http\Controllers\Controller;
+use App\Traits\ApiResponse;
 
-use App\Http\Requests\UpdateProfileRequest;
-use App\Http\Requests\UpdatePasswordRequest;
+use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
@@ -28,7 +29,6 @@ class ProfileController extends Controller
     public function show(
         Request $request
     ) {
-
         return $this->successResponse(
             $this->profileService->show(
                 $request->user()
@@ -43,7 +43,6 @@ class ProfileController extends Controller
     public function update(
         UpdateProfileRequest $request
     ) {
-
         $profile = $this->profileService->update(
             user: $request->user(),
             data: $request->validated()
@@ -61,7 +60,6 @@ class ProfileController extends Controller
     public function updatePassword(
         UpdatePasswordRequest $request
     ) {
-
         $this->profileService->updatePassword(
             user: $request->user(),
             data: $request->validated()
@@ -77,21 +75,11 @@ class ProfileController extends Controller
      * Upload avatar.
      */
     public function uploadAvatar(
-        Request $request
+        UploadAvatarRequest $request
     ) {
-
-        $validated = $request->validate([
-            'avatar' => [
-                'required',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:2048',
-            ],
-        ]);
-
         $profile = $this->profileService->uploadAvatar(
             user: $request->user(),
-            avatar: $validated['avatar']
+            avatar: $request->file('avatar')
         );
 
         return $this->successResponse(
@@ -106,7 +94,6 @@ class ProfileController extends Controller
     public function deleteAvatar(
         Request $request
     ) {
-
         $profile = $this->profileService->deleteAvatar(
             $request->user()
         );
@@ -115,5 +102,5 @@ class ProfileController extends Controller
             $profile,
             'Avatar berhasil dihapus'
         );
-    }
 }
+    }

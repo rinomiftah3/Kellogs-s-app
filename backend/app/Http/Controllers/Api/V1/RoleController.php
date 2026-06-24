@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Traits\ApiResponse;
-
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\StoreRoleRequest;
@@ -15,6 +11,10 @@ use App\Http\Resources\V1\RoleResource;
 
 use App\Services\RoleService;
 
+use App\Traits\ApiResponse;
+
+use Illuminate\Http\Request;
+
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -23,36 +23,45 @@ class RoleController extends Controller
 
     public function __construct(
         private readonly RoleService $roleService
-    ) {}
+    ) {
+    }
 
     /**
-     * Display listing.
+     * Display role listing.
      */
     public function index(
         Request $request
     ) {
 
-        $roles = $this->roleService
-            ->paginate(
-                filters: [
-                    'search' =>
-                        $request->get(
-                            'search'
-                        ),
-                ],
-                perPage: min(
-                    (int) $request->get(
-                        'per_page',
-                        10
-                    ),
+        $roles = $this->roleService->paginate(
+            filters: [
+                'search' => $request->input(
+                    'search'
+                ),
+            ],
+            perPage: min(
+                (int) $request->input(
+                    'per_page',
+                    config(
+                        'app.default_per_page',
+                        15
+                    )
+                ),
+                config(
+                    'app.max_per_page',
                     100
                 )
-            );
+            )
+        );
 
-        return $this->successResponse(
+        $roles->setCollection(
             RoleResource::collection(
-                $roles
-            ),
+                $roles->getCollection()
+            )->collection
+        );
+
+        return $this->paginatedResponse(
+            $roles,
             'Data role berhasil diambil'
         );
     }
@@ -64,29 +73,22 @@ class RoleController extends Controller
         StoreRoleRequest $request
     ) {
 
-        $role = $this->roleService
-            ->create(
-                data:
-                    $request->validated(),
+        $role = $this->roleService->create(
+            data: $request->validated(),
+            actor: $request->user(),
+            request: $request
+        );
 
-                actor:
-                    $request->user(),
-
-                request:
-                    $request
-            );
-
-        return $this->successResponse(
+        return $this->createdResponse(
             new RoleResource(
                 $role
             ),
-            'Role berhasil dibuat',
-            201
+            'Role berhasil dibuat'
         );
     }
 
     /**
-     * Show role.
+     * Show role detail.
      */
     public function show(
         Role $role
@@ -94,8 +96,9 @@ class RoleController extends Controller
 
         return $this->successResponse(
             new RoleResource(
-                $this->roleService
-                    ->find($role)
+                $this->roleService->find(
+                    $role
+                )
             ),
             'Detail role berhasil diambil'
         );
@@ -109,20 +112,12 @@ class RoleController extends Controller
         Role $role
     ) {
 
-        $role = $this->roleService
-            ->update(
-                role:
-                    $role,
-
-                data:
-                    $request->validated(),
-
-                actor:
-                    $request->user(),
-
-                request:
-                    $request
-            );
+        $role = $this->roleService->update(
+            role: $role,
+            data: $request->validated(),
+            actor: $request->user(),
+            request: $request
+        );
 
         return $this->successResponse(
             new RoleResource(
@@ -140,20 +135,13 @@ class RoleController extends Controller
         Request $request
     ) {
 
-        $this->roleService
-            ->delete(
-                role:
-                    $role,
+        $this->roleService->delete(
+            role: $role,
+            actor: $request->user(),
+            request: $request
+        );
 
-                actor:
-                    $request->user(),
-
-                request:
-                    $request
-            );
-
-        return $this->successResponse(
-            null,
+        return $this->deletedResponse(
             'Role berhasil dihapus'
         );
     }

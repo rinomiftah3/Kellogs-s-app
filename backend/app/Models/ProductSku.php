@@ -17,6 +17,85 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $product_id
+ * @property string $sku
+ * @property string|null $barcode
+ * @property numeric $price
+ * @property numeric|null $compare_at_price
+ * @property numeric|null $cost_price
+ * @property numeric $weight
+ * @property numeric|null $length
+ * @property numeric|null $width
+ * @property numeric|null $height
+ * @property int $minimum_order_quantity
+ * @property int|null $maximum_order_quantity
+ * @property bool $is_default
+ * @property string $status
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CartItem> $cartItems
+ * @property-read int|null $cart_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CheckoutItem> $checkoutItems
+ * @property-read int|null $checkout_items_count
+ * @property-read int $inventory_stock
+ * @property-read float $margin_percentage
+ * @property-read float $profit
+ * @property-read \App\Models\Inventory|null $inventory
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductOptionValue> $optionValues
+ * @property-read int|null $option_values_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $orderItems
+ * @property-read int|null $order_items_count
+ * @property-read \App\Models\Product|null $product
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PromoSku> $promoSkus
+ * @property-read int|null $promo_skus_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductSkuValue> $values
+ * @property-read int|null $values_count
+ * @method static Builder<static>|ProductSku active()
+ * @method static Builder<static>|ProductSku activeStatus()
+ * @method static Builder<static>|ProductSku default()
+ * @method static Builder<static>|ProductSku draft()
+ * @method static \Database\Factories\ProductSkuFactory factory($count = null, $state = [])
+ * @method static Builder<static>|ProductSku inStock()
+ * @method static Builder<static>|ProductSku latest()
+ * @method static Builder<static>|ProductSku newModelQuery()
+ * @method static Builder<static>|ProductSku newQuery()
+ * @method static Builder<static>|ProductSku onlyTrashed()
+ * @method static Builder<static>|ProductSku outOfStock()
+ * @method static Builder<static>|ProductSku published()
+ * @method static Builder<static>|ProductSku query()
+ * @method static Builder<static>|ProductSku search(?string $keyword)
+ * @method static Builder<static>|ProductSku status(string $status)
+ * @method static Builder<static>|ProductSku whereBarcode($value)
+ * @method static Builder<static>|ProductSku whereCompareAtPrice($value)
+ * @method static Builder<static>|ProductSku whereCostPrice($value)
+ * @method static Builder<static>|ProductSku whereCreatedAt($value)
+ * @method static Builder<static>|ProductSku whereDeletedAt($value)
+ * @method static Builder<static>|ProductSku whereHeight($value)
+ * @method static Builder<static>|ProductSku whereId($value)
+ * @method static Builder<static>|ProductSku whereIsActive($value)
+ * @method static Builder<static>|ProductSku whereIsDefault($value)
+ * @method static Builder<static>|ProductSku whereLength($value)
+ * @method static Builder<static>|ProductSku whereMaximumOrderQuantity($value)
+ * @method static Builder<static>|ProductSku whereMinimumOrderQuantity($value)
+ * @method static Builder<static>|ProductSku wherePrice($value)
+ * @method static Builder<static>|ProductSku whereProductId($value)
+ * @method static Builder<static>|ProductSku wherePublishedAt($value)
+ * @method static Builder<static>|ProductSku whereSku($value)
+ * @method static Builder<static>|ProductSku whereStatus($value)
+ * @method static Builder<static>|ProductSku whereUpdatedAt($value)
+ * @method static Builder<static>|ProductSku whereWeight($value)
+ * @method static Builder<static>|ProductSku whereWidth($value)
+ * @method static Builder<static>|ProductSku withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|ProductSku withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ProductSku extends Model
 {
     use HasFactory;
@@ -377,7 +456,16 @@ class ProductSku extends Model
                         'barcode',
                         'like',
                         "%{$keyword}%"
-                    );
+                    )
+                    ->orWhereHas(
+    'product',
+    fn ($query) =>
+        $query->where(
+            'name',
+            'like',
+            "%{$keyword}%"
+        )
+);
                 })
         );
     }
@@ -487,6 +575,6 @@ class ProductSku extends Model
 
     public function getRouteKeyName(): string
     {
-        return 'sku';
+        return 'id';
     }
 }

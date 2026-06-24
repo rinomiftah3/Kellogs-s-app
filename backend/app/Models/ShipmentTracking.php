@@ -13,6 +13,77 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $shipment_id
+ * @property string|null $tracking_code
+ * @property string|null $tracking_event_code
+ * @property string $status
+ * @property string|null $location
+ * @property string|null $city
+ * @property string|null $province
+ * @property string $description
+ * @property string|null $courier_status
+ * @property string|null $courier_code
+ * @property numeric|null $latitude
+ * @property numeric|null $longitude
+ * @property int $event_sequence
+ * @property \Illuminate\Support\Carbon $tracked_at
+ * @property \Illuminate\Support\Carbon|null $processed_at
+ * @property bool $is_latest
+ * @property bool $is_customer_visible
+ * @property string $source
+ * @property array<array-key, mixed>|null $payload
+ * @property array<array-key, mixed>|null $metadata
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read string|null $display_location
+ * @property-read bool $is_processed
+ * @property-read \App\Models\Shipment|null $shipment
+ * @method static Builder<static>|ShipmentTracking byShipment(?int $shipmentId)
+ * @method static Builder<static>|ShipmentTracking courierApi()
+ * @method static Builder<static>|ShipmentTracking customerVisible()
+ * @method static Builder<static>|ShipmentTracking latest()
+ * @method static Builder<static>|ShipmentTracking latestEvent()
+ * @method static Builder<static>|ShipmentTracking newModelQuery()
+ * @method static Builder<static>|ShipmentTracking newQuery()
+ * @method static Builder<static>|ShipmentTracking onlyTrashed()
+ * @method static Builder<static>|ShipmentTracking processed()
+ * @method static Builder<static>|ShipmentTracking query()
+ * @method static Builder<static>|ShipmentTracking status(string $status)
+ * @method static Builder<static>|ShipmentTracking trackedBetween($from, $to)
+ * @method static Builder<static>|ShipmentTracking trackingCode(string $trackingCode)
+ * @method static Builder<static>|ShipmentTracking whereCity($value)
+ * @method static Builder<static>|ShipmentTracking whereCourierCode($value)
+ * @method static Builder<static>|ShipmentTracking whereCourierStatus($value)
+ * @method static Builder<static>|ShipmentTracking whereCreatedAt($value)
+ * @method static Builder<static>|ShipmentTracking whereDeletedAt($value)
+ * @method static Builder<static>|ShipmentTracking whereDescription($value)
+ * @method static Builder<static>|ShipmentTracking whereEventSequence($value)
+ * @method static Builder<static>|ShipmentTracking whereId($value)
+ * @method static Builder<static>|ShipmentTracking whereIsCustomerVisible($value)
+ * @method static Builder<static>|ShipmentTracking whereIsLatest($value)
+ * @method static Builder<static>|ShipmentTracking whereLatitude($value)
+ * @method static Builder<static>|ShipmentTracking whereLocation($value)
+ * @method static Builder<static>|ShipmentTracking whereLongitude($value)
+ * @method static Builder<static>|ShipmentTracking whereMetadata($value)
+ * @method static Builder<static>|ShipmentTracking wherePayload($value)
+ * @method static Builder<static>|ShipmentTracking whereProcessedAt($value)
+ * @method static Builder<static>|ShipmentTracking whereProvince($value)
+ * @method static Builder<static>|ShipmentTracking whereShipmentId($value)
+ * @method static Builder<static>|ShipmentTracking whereSource($value)
+ * @method static Builder<static>|ShipmentTracking whereStatus($value)
+ * @method static Builder<static>|ShipmentTracking whereTrackedAt($value)
+ * @method static Builder<static>|ShipmentTracking whereTrackingCode($value)
+ * @method static Builder<static>|ShipmentTracking whereTrackingEventCode($value)
+ * @method static Builder<static>|ShipmentTracking whereUpdatedAt($value)
+ * @method static Builder<static>|ShipmentTracking withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|ShipmentTracking withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ShipmentTracking extends Model
 {
     use HasFactory;

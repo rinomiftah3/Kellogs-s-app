@@ -77,31 +77,6 @@ class StoreProductReviewRequest extends FormRequest
                 ),
             ],
 
-            'customer_profile_id' => [
-
-                'bail',
-
-                'required',
-
-                'integer',
-
-                Rule::exists(
-                    'customer_profiles',
-                    'id'
-                ),
-
-                Rule::unique(
-                    'product_reviews'
-                )->where(
-                    fn ($query)
-
-                        => $query->where(
-                            'product_id',
-                            $this->product_id
-                        )
-                ),
-            ],
-
             'rating' => [
 
                 'required',
@@ -172,15 +147,6 @@ class StoreProductReviewRequest extends FormRequest
             'product_id.exists' =>
                 'Produk tidak ditemukan.',
 
-            'customer_profile_id.required' =>
-                'Customer wajib dipilih.',
-
-            'customer_profile_id.exists' =>
-                'Customer tidak ditemukan.',
-
-            'customer_profile_id.unique' =>
-                'Anda sudah pernah memberikan review untuk produk ini.',
-
             'rating.required' =>
                 'Rating wajib diisi.',
 
@@ -219,9 +185,6 @@ class StoreProductReviewRequest extends FormRequest
 
             'product_id' =>
                 'produk',
-
-            'customer_profile_id' =>
-                'customer',
 
             'rating' =>
                 'rating',

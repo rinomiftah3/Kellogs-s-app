@@ -18,6 +18,53 @@ use Spatie\Activitylog\Support\LogOptions;
  *
  * Laravel 13
  * PHP 8.4
+ *
+ * @property int $id
+ * @property int $promotion_id
+ * @property int $product_sku_id
+ * @property numeric|null $discount_value
+ * @property numeric|null $maximum_discount
+ * @property numeric|null $minimum_purchase
+ * @property numeric|null $promo_price
+ * @property int|null $max_quantity_per_order
+ * @property int|null $usage_limit
+ * @property int $used_count
+ * @property bool $is_active
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read float $effective_discount
+ * @property-read float|null $effective_maximum_discount
+ * @property-read float $effective_minimum_purchase
+ * @property-read int|null $remaining_usage
+ * @property-read \App\Models\ProductSku|null $productSku
+ * @property-read \App\Models\Promotion|null $promotion
+ * @method static Builder<static>|PromoSku active()
+ * @method static Builder<static>|PromoSku byPromotion(?int $promotionId)
+ * @method static Builder<static>|PromoSku bySku(?int $skuId)
+ * @method static Builder<static>|PromoSku flashSale()
+ * @method static Builder<static>|PromoSku inactive()
+ * @method static Builder<static>|PromoSku newModelQuery()
+ * @method static Builder<static>|PromoSku newQuery()
+ * @method static Builder<static>|PromoSku query()
+ * @method static Builder<static>|PromoSku running()
+ * @method static Builder<static>|PromoSku whereCreatedAt($value)
+ * @method static Builder<static>|PromoSku whereDiscountValue($value)
+ * @method static Builder<static>|PromoSku whereId($value)
+ * @method static Builder<static>|PromoSku whereIsActive($value)
+ * @method static Builder<static>|PromoSku whereMaxQuantityPerOrder($value)
+ * @method static Builder<static>|PromoSku whereMaximumDiscount($value)
+ * @method static Builder<static>|PromoSku whereMinimumPurchase($value)
+ * @method static Builder<static>|PromoSku whereNotes($value)
+ * @method static Builder<static>|PromoSku whereProductSkuId($value)
+ * @method static Builder<static>|PromoSku wherePromoPrice($value)
+ * @method static Builder<static>|PromoSku wherePromotionId($value)
+ * @method static Builder<static>|PromoSku whereUpdatedAt($value)
+ * @method static Builder<static>|PromoSku whereUsageLimit($value)
+ * @method static Builder<static>|PromoSku whereUsedCount($value)
+ * @mixin \Eloquent
  */
 class PromoSku extends Model
 {

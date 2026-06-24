@@ -18,12 +18,8 @@ class CategoryPolicy
     ): bool|null {
 
         if (
-            method_exists(
-                $user,
-                'hasRole'
-            ) &&
             $user->hasRole(
-                'Super Admin'
+                User::ROLE_SUPER_ADMIN
             )
         ) {
 
@@ -79,7 +75,7 @@ class CategoryPolicy
     ): Response {
 
         if (
-            !$user->can(
+            ! $user->can(
                 'categories.update'
             )
         ) {
@@ -101,7 +97,7 @@ class CategoryPolicy
     ): Response {
 
         if (
-            !$user->can(
+            ! $user->can(
                 'categories.delete'
             )
         ) {
@@ -118,9 +114,7 @@ class CategoryPolicy
         */
 
         if (
-            $category
-                ->products()
-                ->exists()
+            $category->hasProducts()
         ) {
 
             return Response::deny(
@@ -128,78 +122,21 @@ class CategoryPolicy
             );
         }
 
-        return Response::allow();
-    }
-
-    /**
-     * Restore category.
-     */
-    public function restore(
-        User $user,
-        Category $category
-    ): bool {
-
-        return $user->can(
-            'categories.restore'
-        );
-    }
-
-    /**
-     * Force delete category.
-     */
-    public function forceDelete(
-        User $user,
-        Category $category
-    ): Response {
+        /*
+        |--------------------------------------------------------------------------
+        | Child Category Protection
+        |--------------------------------------------------------------------------
+        */
 
         if (
-            !$user->can(
-                'categories.force-delete'
-            )
+            $category->hasChildren()
         ) {
 
             return Response::deny(
-                'Anda tidak memiliki izin menghapus permanen kategori.'
-            );
-        }
-
-        if (
-            $category
-                ->products()
-                ->exists()
-        ) {
-
-            return Response::deny(
-                'Kategori masih digunakan oleh produk.'
+                'Kategori masih memiliki subkategori.'
             );
         }
 
         return Response::allow();
-    }
-
-    /**
-     * Activate category.
-     */
-    public function activate(
-        User $user,
-        Category $category
-    ): bool {
-
-        return $user->can(
-            'categories.update'
-        );
-    }
-
-    /**
-     * Deactivate category.
-     */
-    public function deactivate(
-        User $user,
-        Category $category
-    ): bool {
-
-        return $user->can(
-            'categories.update'
-        );
     }
 }
