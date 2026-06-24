@@ -968,34 +968,34 @@ Route::prefix('v1')->group(function () {
         |--------------------------------------------------------------------------
         */
 
-        Route::prefix('orders')
-            ->controller(OrderController::class)
-            ->group(function () {
+        Route::prefix(
+            'orders'
+        )
+        ->controller(
+            OrderController::class
+        )
+        ->group(function () {
 
-                Route::get('/', 'index');
+            Route::get(
+                '/',
+                'index'
+            );
 
-                Route::get('/statistics', 'statistics');
+            Route::get(
+                '/{order}',
+                'show'
+            );
 
-                Route::get('/my-orders', 'myOrders');
+            Route::patch(
+                '/{order}/status',
+                'updateStatus'
+            );
 
-                Route::get('/my-orders/{order}', 'myOrder');
-
-                Route::get('/{order}', 'show');
-
-                Route::get('/{order}/history', 'history');
-
-                Route::get('/{order}/payment', 'payment');
-
-                Route::get('/{order}/tracking', 'tracking');
-
-                Route::patch('/{order}/status', 'updateStatus');
-
-                Route::patch('/{order}/tracking', 'updateTracking');
-
-                Route::patch('/{order}/cancel', 'cancel');
-
-                Route::post('/{order}/reorder', 'reorder');
-            });
+            Route::patch(
+                '/{order}/cancel',
+                'cancel'
+            );
+        });
         /*
         |--------------------------------------------------------------------------
         | Payments
