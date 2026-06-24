@@ -66,7 +66,8 @@ export function AuthProvider({
   const login =
     async (
       email,
-      password
+      password,
+      remember = true
     ) => {
       const response =
         await api.post(
@@ -74,6 +75,7 @@ export function AuthProvider({
           {
             email,
             password,
+            remember,
           }
         );
 

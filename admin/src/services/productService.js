@@ -1,39 +1,55 @@
 import api from "../api/axios";
 
-export const getProducts =
-  async (
-    params = {}
-  ) => {
+/*
+|--------------------------------------------------------------------------
+| Get Products
+|--------------------------------------------------------------------------
+*/
 
-    const response =
-      await api.get(
-        "/products",
-        {
-          params,
-        }
-      );
+export const getProducts = async (
+  params = {}
+) => {
+  const response =
+    await api.get(
+      "/products",
+      {
+        params,
+      }
+    );
 
-    return response.data.data;
-  };
+  return response.data.data;
+};
 
-export const getProduct =
-  async (id) => {
+/*
+|--------------------------------------------------------------------------
+| Get Product Detail
+|--------------------------------------------------------------------------
+*/
 
-    const response =
-      await api.get(
-        `/products/${id}`
-      );
+export const getProduct = async (
+  slug
+) => {
+  const response =
+    await api.get(
+      `/products/${slug}`
+    );
 
-    return response.data.data;
-  };
+  return response.data.data;
+};
+
+/*
+|--------------------------------------------------------------------------
+| Create Product
+|--------------------------------------------------------------------------
+*/
 
 export const createProduct =
-  async (data) => {
+  async (formData) => {
 
     const response =
       await api.post(
         "/products",
-        data,
+        formData,
         {
           headers: {
             "Content-Type":
@@ -44,17 +60,23 @@ export const createProduct =
 
     return response.data.data;
   };
+
+/*
+|--------------------------------------------------------------------------
+| Update Product
+|--------------------------------------------------------------------------
+*/
 
 export const updateProduct =
   async (
-    id,
-    data
+    slug,
+    formData
   ) => {
 
     const response =
       await api.post(
-        `/products/${id}?_method=PUT`,
-        data,
+        `/products/${slug}?_method=PUT`,
+        formData,
         {
           headers: {
             "Content-Type":
@@ -66,13 +88,82 @@ export const updateProduct =
     return response.data.data;
   };
 
+/*
+|--------------------------------------------------------------------------
+| Delete Product
+|--------------------------------------------------------------------------
+*/
+
 export const deleteProduct =
-  async (id) => {
+  async (slug) => {
 
     const response =
       await api.delete(
-        `/products/${id}`
+        `/products/${slug}`
       );
 
     return response.data;
   };
+
+/*
+|--------------------------------------------------------------------------
+| Product Filters Helper
+|--------------------------------------------------------------------------
+*/
+
+export const productFilters = {
+
+  search: (
+    keyword
+  ) => ({
+    search: keyword,
+  }),
+
+  category: (
+    categoryId
+  ) => ({
+    category_id:
+      categoryId,
+  }),
+
+  status: (
+    status
+  ) => ({
+    status,
+  }),
+
+  active: (
+    value
+  ) => ({
+    is_active: value,
+  }),
+
+  featured: (
+    value
+  ) => ({
+    is_featured: value,
+  }),
+
+  published: (
+    value
+  ) => ({
+    published: value,
+  }),
+
+  paginate: (
+    page = 1,
+    perPage = 15
+  ) => ({
+    page,
+    per_page:
+      perPage,
+  }),
+
+  sort: (
+    sort = "latest",
+    direction = "desc"
+  ) => ({
+    sort,
+    direction,
+  }),
+};

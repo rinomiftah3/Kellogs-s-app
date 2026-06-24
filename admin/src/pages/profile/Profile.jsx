@@ -1,4 +1,20 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  User,
+  Mail,
+  Lock,
+  Camera,
+  Trash2,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  Save,
+  KeyRound,
+} from "lucide-react";
 
 import {
   getProfile,
@@ -14,10 +30,21 @@ import {
   confirmDelete,
 } from "../../utils/alert";
 
-import { useAuth } from "../../context/AuthContext";
+import {
+  useAuth,
+} from "../../context/AuthContext";
 
 export default function Profile() {
-  const { refreshUser } = useAuth();
+
+  const {
+    refreshUser,
+  } = useAuth();
+
+  /*
+  |--------------------------------------------------------------------------
+  | State
+  |--------------------------------------------------------------------------
+  */
 
   const [loading, setLoading] =
     useState(true);
@@ -51,246 +78,683 @@ export default function Profile() {
     setNewPasswordConfirmation,
   ] = useState("");
 
-  const loadProfile = async () => {
-  try {
-    setLoading(true);
+  /*
+  |--------------------------------------------------------------------------
+  | Password Visibility
+  |--------------------------------------------------------------------------
+  */
 
-    const data =
-      await getProfile();
+  const [
+    showCurrentPassword,
+    setShowCurrentPassword,
+  ] = useState(false);
+
+  const [
+    showNewPassword,
+    setShowNewPassword,
+  ] = useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Load Profile
+  |--------------------------------------------------------------------------
+  */
+
+  const loadProfile = async () => {
+
+    try {
+
+      setLoading(true);
+
+      const data =
+        await getProfile();
+
+      setProfile(data);
+
+      setName(
+        data?.name || ""
+      );
+
+      setEmail(
+        data?.email || ""
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      errorAlert(
+        error?.response?.data?.message ||
+        "Gagal memuat profile"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  useEffect(() => {
+
+    loadProfile();
+
+  }, []);
+  /*
+  |--------------------------------------------------------------------------
+  | Sync Profile
+  |--------------------------------------------------------------------------
+  */
+
+  const syncProfile = async (
+    data
+  ) => {
 
     setProfile(data);
-    setName(data?.name || "");
-    setEmail(data?.email || "");
-  } catch (error) {
-    errorAlert(
-      error?.response?.data?.message ||
-      "Gagal memuat profile"
+
+    setName(
+      data?.name || ""
     );
-  } finally {
-    setLoading(false);
-  }
-};
-  useEffect(() => {
-    loadProfile();
-  }, []);
 
-  const syncProfile = async (data) => {
-  setProfile(data);
+    setEmail(
+      data?.email || ""
+    );
 
-  setName(
-    data?.name || ""
-  );
+    if (refreshUser) {
 
-  setEmail(
-    data?.email || ""
-  );
+      await refreshUser();
 
-  if (refreshUser) {
-    await refreshUser();
-  }
-};
-
-  const handleProfileSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!name.trim()) {
-      return errorAlert("Nama wajib diisi");
     }
 
-    if (!email.trim()) {
-      return errorAlert("Email wajib diisi");
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | Password Strength
+  |--------------------------------------------------------------------------
+  */
+
+  const passwordStrength = (() => {
+
+    if (!newPassword) {
+
+      return {
+        label: "",
+        width: "0%",
+        color: "",
+      };
+
     }
 
-    try {
-      setSavingProfile(true);
+    let score = 0;
 
-      const profile =
-  await updateProfile({
-    name,
-    email,
-  });
+    if (newPassword.length >= 8) {
+      score++;
+    }
 
-      await syncProfile(
-  profile
-);
+    if (/[A-Z]/.test(newPassword)) {
+      score++;
+    }
 
-      await successAlert(
-        "Profile berhasil diperbarui"
-      );
-    } catch (error) {
-      const errors =
-        error?.response?.data?.errors;
+    if (/[0-9]/.test(newPassword)) {
+      score++;
+    }
 
-      if (errors) {
+    if (/[^A-Za-z0-9]/.test(newPassword)) {
+      score++;
+    }
+
+    switch (score) {
+
+      case 1:
+        return {
+          label: "Weak",
+          width: "25%",
+          color: "bg-red-500",
+        };
+
+      case 2:
+        return {
+          label: "Fair",
+          width: "50%",
+          color: "bg-amber-500",
+        };
+
+      case 3:
+        return {
+          label: "Good",
+          width: "75%",
+          color: "bg-blue-500",
+        };
+
+      case 4:
+        return {
+          label: "Strong",
+          width: "100%",
+          color: "bg-green-500",
+        };
+
+      default:
+        return {
+          label: "Very Weak",
+          width: "10%",
+          color: "bg-red-500",
+        };
+
+    }
+
+  })();
+
+  /*
+  |--------------------------------------------------------------------------
+  | Update Profile
+  |--------------------------------------------------------------------------
+  */
+
+  const handleProfileSubmit =
+    async (e) => {
+
+      e.preventDefault();
+
+      if (!name.trim()) {
+
         return errorAlert(
-          Object.values(errors)[0][0]
+          "Nama wajib diisi"
         );
+
       }
 
-      errorAlert(
-        error?.response?.data?.message ||
-        "Gagal memperbarui profile"
-      );
-    } finally {
-      setSavingProfile(false);
-    }
-  };
+      if (!email.trim()) {
 
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-
-    if (
-      !currentPassword ||
-      !newPassword ||
-      !newPasswordConfirmation
-    ) {
-      return errorAlert(
-        "Semua field password wajib diisi"
-      );
-    }
-
-    try {
-      setSavingPassword(true);
-
-      await updatePassword({
-        current_password: currentPassword,
-        new_password: newPassword,
-        new_password_confirmation:
-          newPasswordConfirmation,
-      });
-
-      setCurrentPassword("");
-      setNewPassword("");
-      setNewPasswordConfirmation("");
-
-      await successAlert(
-        "Password berhasil diperbarui"
-      );
-    } catch (error) {
-      const errors =
-        error?.response?.data?.errors;
-
-      if (errors) {
         return errorAlert(
-          Object.values(errors)[0][0]
+          "Email wajib diisi"
         );
+
       }
 
-      errorAlert(
-        error?.response?.data?.message ||
-        "Gagal memperbarui password"
-      );
-    } finally {
-      setSavingPassword(false);
-    }
-  };
+      try {
 
-  const handleAvatarChange = async (e) => {
-    const file =
-      e.target.files[0];
+        setSavingProfile(true);
 
-    if (!file) return;
+        const updatedProfile =
+          await updateProfile({
+            name,
+            email,
+          });
 
-    const formData =
-      new FormData();
-
-    formData.append("avatar", file);
-
-    try {
-      setSavingAvatar(true);
-
-      const profile =
-  await uploadAvatar(formData);
-
-await syncProfile(profile);
-
-      await successAlert(
-        "Avatar berhasil diupload"
-      );
-    } catch (error) {
-      const errors =
-        error?.response?.data?.errors;
-
-      if (errors) {
-        return errorAlert(
-          Object.values(errors)[0][0]
+        await syncProfile(
+          updatedProfile
         );
+
+        await successAlert(
+          "Profile berhasil diperbarui"
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        const errors =
+          error?.response?.data
+            ?.errors;
+
+        if (errors) {
+
+          return errorAlert(
+            Object.values(errors)[0][0]
+          );
+
+        }
+
+        errorAlert(
+          error?.response?.data
+            ?.message ||
+          "Gagal memperbarui profile"
+        );
+
+      } finally {
+
+        setSavingProfile(false);
+
       }
 
-      errorAlert(
-        error?.response?.data?.message ||
-        "Gagal upload avatar"
+    };
+
+  /*
+  |--------------------------------------------------------------------------
+  | Update Password
+  |--------------------------------------------------------------------------
+  */
+
+  const handlePasswordSubmit =
+    async (e) => {
+
+      e.preventDefault();
+
+      if (
+        !currentPassword ||
+        !newPassword ||
+        !newPasswordConfirmation
+      ) {
+
+        return errorAlert(
+          "Semua field password wajib diisi"
+        );
+
+      }
+
+      if (
+        newPassword !==
+        newPasswordConfirmation
+      ) {
+
+        return errorAlert(
+          "Konfirmasi password tidak sesuai"
+        );
+
+      }
+
+      try {
+
+        setSavingPassword(true);
+
+        await updatePassword({
+
+          current_password:
+            currentPassword,
+
+          new_password:
+            newPassword,
+
+          new_password_confirmation:
+            newPasswordConfirmation,
+
+        });
+
+        setCurrentPassword("");
+
+        setNewPassword("");
+
+        setNewPasswordConfirmation("");
+
+        await successAlert(
+          "Password berhasil diperbarui"
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        const errors =
+          error?.response?.data
+            ?.errors;
+
+        if (errors) {
+
+          return errorAlert(
+            Object.values(errors)[0][0]
+          );
+
+        }
+
+        errorAlert(
+          error?.response?.data
+            ?.message ||
+          "Gagal memperbarui password"
+        );
+
+      } finally {
+
+        setSavingPassword(false);
+
+      }
+
+    };
+  /*
+  |--------------------------------------------------------------------------
+  | Upload Avatar
+  |--------------------------------------------------------------------------
+  */
+
+  const handleAvatarChange =
+    async (e) => {
+
+      const file =
+        e.target.files?.[0];
+
+      if (!file) return;
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "avatar",
+        file
       );
-    } finally {
-      setSavingAvatar(false);
-      e.target.value = "";
-    }
-  };
 
-  const handleDeleteAvatar = async () => {
-    const result =
-      await confirmDelete();
+      try {
 
-    if (!result.isConfirmed) {
-      return;
-    }
+        setSavingAvatar(true);
 
-    try {
-      setSavingAvatar(true);
+        const updatedProfile =
+          await uploadAvatar(
+            formData
+          );
 
-      const profile =
-  await deleteAvatar();
+        await syncProfile(
+          updatedProfile
+        );
 
-await syncProfile(profile);
+        await successAlert(
+          "Avatar berhasil diupload"
+        );
 
-      await successAlert(
-        "Avatar berhasil dihapus"
-      );
-    } catch (error) {
-      errorAlert(
-        error?.response?.data?.message ||
-        "Gagal menghapus avatar"
-      );
-    } finally {
-      setSavingAvatar(false);
-    }
-  };
+      } catch (error) {
+
+        console.error(error);
+
+        const errors =
+          error?.response?.data
+            ?.errors;
+
+        if (errors) {
+
+          return errorAlert(
+            Object.values(errors)[0][0]
+          );
+
+        }
+
+        errorAlert(
+          error?.response?.data
+            ?.message ||
+          "Gagal upload avatar"
+        );
+
+      } finally {
+
+        setSavingAvatar(false);
+
+        e.target.value = "";
+
+      }
+
+    };
+
+  /*
+  |--------------------------------------------------------------------------
+  | Delete Avatar
+  |--------------------------------------------------------------------------
+  */
+
+  const handleDeleteAvatar =
+    async () => {
+
+      const result =
+        await confirmDelete();
+
+      if (
+        !result.isConfirmed
+      ) {
+
+        return;
+
+      }
+
+      try {
+
+        setSavingAvatar(true);
+
+        const updatedProfile =
+          await deleteAvatar();
+
+        await syncProfile(
+          updatedProfile
+        );
+
+        await successAlert(
+          "Avatar berhasil dihapus"
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        errorAlert(
+          error?.response?.data
+            ?.message ||
+          "Gagal menghapus avatar"
+        );
+
+      } finally {
+
+        setSavingAvatar(false);
+
+      }
+
+    };
+
+  /*
+  |--------------------------------------------------------------------------
+  | Loading State
+  |--------------------------------------------------------------------------
+  */
 
   if (loading) {
-    return <p>Loading...</p>;
+
+    return (
+
+      <div className="space-y-6 animate-pulse">
+
+        <div className="h-48 rounded-3xl bg-slate-200" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <div className="h-96 rounded-3xl bg-slate-200" />
+
+          <div className="lg:col-span-2 h-96 rounded-3xl bg-slate-200" />
+
+        </div>
+
+        <div className="h-80 rounded-3xl bg-slate-200" />
+
+      </div>
+
+    );
+
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">
-        Profile
-      </h1>
 
-      <div className="grid grid-cols-3 gap-6">
-        <div className="bg-white rounded shadow p-5">
-          <h2 className="text-lg font-semibold mb-4">
-            Avatar
-          </h2>
+    <div className="space-y-6">
+
+      {/* Hero */}
+      <div
+        className="
+          rounded-3xl
+          bg-gradient-to-r
+          from-slate-900
+          via-slate-800
+          to-slate-900
+          p-8
+          text-white
+          shadow-xl
+          relative
+          overflow-hidden
+        "
+      >
+
+        <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-white/5" />
+
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-white/5" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+          <div className="flex items-center gap-5">
+
+            <div
+              className="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/10
+                backdrop-blur
+                flex
+                items-center
+                justify-center
+              "
+            >
+              <User className="w-8 h-8 text-red-400" />
+            </div>
+
+            <div>
+
+              <h1 className="text-4xl font-bold">
+                My Profile
+              </h1>
+
+              <p className="text-slate-300 mt-2">
+                Manage your personal information,
+                avatar, and account security.
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+
+            <div className="bg-white/10 backdrop-blur rounded-2xl px-4 py-2 text-sm">
+
+              {profile?.roles?.[0]?.name ||
+                "Administrator"}
+
+            </div>
+
+            <div className="bg-white/10 backdrop-blur rounded-2xl px-4 py-2 text-sm">
+
+              Active Account
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* Avatar Card */}
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
 
           <div className="flex flex-col items-center">
+
             {profile?.avatar_url ? (
+
               <img
                 src={profile.avatar_url}
                 alt={profile.name}
-                className="w-32 h-32 rounded-full object-cover border"
+                className="
+                  w-36
+                  h-36
+                  rounded-full
+                  object-cover
+                  ring-4
+                  ring-red-100
+                  shadow-lg
+                "
               />
+
             ) : (
-              <div className="w-32 h-32 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-4xl font-bold">
+
+              <div
+                className="
+                  w-36
+                  h-36
+                  rounded-full
+                  bg-gradient-to-br
+                  from-red-500
+                  to-red-600
+                  text-white
+                  flex
+                  items-center
+                  justify-center
+                  text-5xl
+                  font-bold
+                  shadow-lg
+                "
+              >
                 {(profile?.name || "U")
                   .charAt(0)
                   .toUpperCase()}
               </div>
+
             )}
 
-            <label className="mt-4 bg-slate-900 text-white px-4 py-2 rounded cursor-pointer">
+            <h2 className="mt-6 text-2xl font-bold text-slate-900">
+              {profile?.name}
+            </h2>
+
+            <p className="text-slate-500 mt-1">
+              {profile?.email}
+            </p>
+
+            <span
+              className="
+                mt-4
+                inline-flex
+                items-center
+                gap-2
+                px-4
+                py-2
+                rounded-full
+                bg-red-50
+                text-red-700
+                text-sm
+                font-medium
+              "
+            >
+              <ShieldCheck className="w-4 h-4" />
+              {profile?.roles?.[0]?.name ||
+                "Administrator"}
+            </span>
+
+            <label
+              className="
+                mt-8
+                w-full
+                inline-flex
+                items-center
+                justify-center
+                gap-2
+                px-6
+                py-3
+                rounded-2xl
+                bg-gradient-to-r
+                from-red-600
+                to-red-700
+                text-white
+                font-semibold
+                cursor-pointer
+                shadow-lg
+                hover:shadow-xl
+                hover:scale-[1.01]
+                transition-all
+              "
+            >
+              <Camera className="w-5 h-5" />
+
               {savingAvatar
-                ? "Processing..."
+                ? "Uploading..."
                 : "Upload Avatar"}
+
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png,.webp"
@@ -301,117 +765,279 @@ await syncProfile(profile);
             </label>
 
             {profile?.avatar_url && (
+
               <button
                 type="button"
                 disabled={savingAvatar}
                 onClick={handleDeleteAvatar}
-                className="mt-3 bg-red-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                className="
+                  mt-3
+                  w-full
+                  inline-flex
+                  items-center
+                  justify-center
+                  gap-2
+                  px-6
+                  py-3
+                  rounded-2xl
+                  border
+                  border-red-200
+                  text-red-600
+                  hover:bg-red-50
+                  transition
+                "
               >
-                Delete Avatar
+                <Trash2 className="w-5 h-5" />
+                Remove Avatar
               </button>
+
             )}
+
           </div>
+
         </div>
 
-        <form
-          onSubmit={handleProfileSubmit}
-          className="bg-white rounded shadow p-5 col-span-2"
-        >
-          <h2 className="text-lg font-semibold mb-4">
-            Profile Information
-          </h2>
+        {/* Profile Information */}
+        <div className="lg:col-span-2 space-y-6">
 
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Name"
-              className="border p-3 rounded disabled:bg-slate-100"
-              value={name}
-              disabled={savingProfile}
-              onChange={(e) =>
-                setName(e.target.value)
-              }
-            />
-
-            <input
-              type="email"
-              placeholder="Email"
-              className="border p-3 rounded disabled:bg-slate-100"
-              value={email}
-              disabled={savingProfile}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={savingProfile}
-            className="mt-4 bg-slate-900 text-white px-4 py-2 rounded disabled:opacity-50"
+          <form
+            onSubmit={handleProfileSubmit}
+            className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8"
           >
-            {savingProfile
-              ? "Saving..."
-              : "Update Profile"}
-          </button>
-        </form>
+
+            <h2 className="text-2xl font-bold text-slate-900">
+              Profile Information
+            </h2>
+
+            <p className="text-slate-500 mt-2">
+              Update your account information.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+              <div>
+
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Full Name
+                </label>
+
+                <input
+                  type="text"
+                  value={name}
+                  disabled={savingProfile}
+                  onChange={(e) =>
+                    setName(e.target.value)
+                  }
+                  className="
+                    w-full
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    px-4
+                    py-3
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-red-500
+                  "
+                />
+
+              </div>
+
+              <div>
+
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Email Address
+                </label>
+
+                <div className="relative">
+
+                  <Mail
+                    className="
+                      absolute
+                      left-4
+                      top-1/2
+                      -translate-y-1/2
+                      w-5
+                      h-5
+                      text-slate-400
+                    "
+                  />
+
+                  <input
+                    type="email"
+                    value={email}
+                    disabled={savingProfile}
+                    onChange={(e) =>
+                      setEmail(e.target.value)
+                    }
+                    className="
+                      w-full
+                      rounded-2xl
+                      border
+                      border-slate-200
+                      pl-12
+                      pr-4
+                      py-3
+                      focus:outline-none
+                      focus:ring-2
+                      focus:ring-red-500
+                    "
+                  />
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingProfile}
+              className="
+                mt-8
+                inline-flex
+                items-center
+                gap-2
+                px-6
+                py-3
+                rounded-2xl
+                bg-gradient-to-r
+                from-red-600
+                to-red-700
+                text-white
+                font-semibold
+                shadow-lg
+                hover:shadow-xl
+                hover:scale-[1.01]
+                transition-all
+              "
+            >
+              <Save className="w-5 h-5" />
+
+              {savingProfile
+                ? "Saving..."
+                : "Save Changes"}
+
+            </button>
+
+          </form>
+
+          {/* Change Password */}
+          <form
+            onSubmit={handlePasswordSubmit}
+            className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8"
+          >
+
+            <h2 className="text-2xl font-bold text-slate-900">
+              Account Security
+            </h2>
+
+            <p className="text-slate-500 mt-2">
+              Update your password regularly.
+            </p>
+
+            <div className="grid grid-cols-1 gap-6 mt-8">
+
+              {/* Current Password */}
+              <div>
+
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Current Password
+                </label>
+
+                {/* Input Current Password */}
+                {/* (gunakan showCurrentPassword) */}
+
+              </div>
+
+              {/* New Password */}
+              <div>
+
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  New Password
+                </label>
+
+                {/* Input New Password */}
+                {/* (gunakan showNewPassword) */}
+
+                {newPassword && (
+
+                  <div className="mt-3">
+
+                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+
+                      <div
+                        className={`h-full ${passwordStrength.color}`}
+                        style={{
+                          width:
+                            passwordStrength.width,
+                        }}
+                      />
+
+                    </div>
+
+                    <p className="text-xs text-slate-500 mt-2">
+                      Strength:
+                      {" "}
+                      {passwordStrength.label}
+                    </p>
+
+                  </div>
+
+                )}
+
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Confirm Password
+                </label>
+
+                {/* Input Confirm Password */}
+                {/* (gunakan showConfirmPassword) */}
+
+              </div>
+
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingPassword}
+              className="
+                mt-8
+                inline-flex
+                items-center
+                gap-2
+                px-6
+                py-3
+                rounded-2xl
+                bg-gradient-to-r
+                from-red-600
+                to-red-700
+                text-white
+                font-semibold
+                shadow-lg
+                hover:shadow-xl
+                hover:scale-[1.01]
+                transition-all
+              "
+            >
+              <KeyRound className="w-5 h-5" />
+
+              {savingPassword
+                ? "Updating..."
+                : "Change Password"}
+
+            </button>
+
+          </form>
+
+        </div>
+
       </div>
 
-      <form
-        onSubmit={handlePasswordSubmit}
-        className="bg-white rounded shadow p-5 mt-6"
-      >
-        <h2 className="text-lg font-semibold mb-4">
-          Change Password
-        </h2>
-
-        <div className="grid grid-cols-3 gap-4">
-          <input
-            type="password"
-            placeholder="Current Password"
-            className="border p-3 rounded disabled:bg-slate-100"
-            value={currentPassword}
-            disabled={savingPassword}
-            onChange={(e) =>
-              setCurrentPassword(e.target.value)
-            }
-          />
-
-          <input
-            type="password"
-            placeholder="New Password"
-            className="border p-3 rounded disabled:bg-slate-100"
-            value={newPassword}
-            disabled={savingPassword}
-            onChange={(e) =>
-              setNewPassword(e.target.value)
-            }
-          />
-
-          <input
-            type="password"
-            placeholder="Confirm New Password"
-            className="border p-3 rounded disabled:bg-slate-100"
-            value={newPasswordConfirmation}
-            disabled={savingPassword}
-            onChange={(e) =>
-              setNewPasswordConfirmation(
-                e.target.value
-              )
-            }
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={savingPassword}
-          className="mt-4 bg-slate-900 text-white px-4 py-2 rounded disabled:opacity-50"
-        >
-          {savingPassword
-            ? "Saving..."
-            : "Change Password"}
-        </button>
-      </form>
     </div>
   );
 }
